@@ -1,10 +1,9 @@
 """Pure PR enrichment: facts only. Deciding which failing checks are 'noise' is the model's job."""
 from . import lib
 
-_BOT_COMMENTERS = ("vercel", "github-actions", "coderabbit", "cla")
+_BOT_COMMENTERS = ("vercel", "github-actions", "coderabbit", "claassistant", "cla-assistant", "clabot", "cla-bot")
 _FAILURE = {"FAILURE", "ERROR", "TIMED_OUT", "CANCELLED", "STARTUP_FAILURE", "ACTION_REQUIRED"}
 _PENDING = {"PENDING", "EXPECTED", ""}
-_REVIEW_ORDER = {"APPROVED", "CHANGES_REQUESTED", "REVIEW_REQUIRED", "NONE"}
 
 def is_bot_author(author):
     a = author or {}
@@ -65,6 +64,10 @@ def check_failure_rates(open_prs):
     return sorted(rows, key=lambda r: (r["rate"], r["failed"]), reverse=True)
 
 def _mechanical_triage(pr, author_type, fails):
+    """Deterministic queue-ordering labels (priority/blockedOn/action) derived only from
+    review state + CI facts. They order and caption the action queue; they are NOT model
+    judgment. Interpretive framing (which checks are noise, ball-in-court nuance, what really
+    unblocks a PR) lives in narrative.json, written by the model."""
     if pr["state"] != "OPEN":
         return {"blockedOn": "", "priority": 99, "action": ""}
     hard = [c for c in fails if c["conclusion"] != "PENDING"]

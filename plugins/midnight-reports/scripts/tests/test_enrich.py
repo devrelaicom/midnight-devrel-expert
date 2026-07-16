@@ -27,6 +27,8 @@ def test_bot_detection():
     assert en.is_bot_commenter("github-actions") is True
     assert en.is_bot_commenter("CLAassistant") is True
     assert en.is_bot_commenter("alice") is False
+    assert en.is_bot_commenter("declan") is False
+    assert en.is_bot_commenter("sinclair") is False
 
 def test_failing_checks_and_status():
     roll = [check("build", "SUCCESS"), ctx("Vercel", "FAILURE"),
