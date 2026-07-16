@@ -1,0 +1,9 @@
+# Local research / planning artifacts — never committed
+.research/
+
+# Python
+__pycache__/
+*.pyc
+
+# Superpowers SDD scratch (per-run task briefs/reports/diffs)
+.superpowers/
