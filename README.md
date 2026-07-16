@@ -8,6 +8,7 @@ A marketplace of [Claude Code plugins](https://docs.anthropic.com/en/docs/claude
 |---|---|
 | [`midnight-docs-drift`](./plugins/midnight-docs-drift) | Detects `midnightntwrk/midnight-docs` pages that have drifted behind the repos they document, then drives an interactive extract → classify → severity-rank → verify → fix → PR pipeline over the stale claims (via `/update-drifted-docs`). |
 | [`gha`](./plugins/gha) | Full-lifecycle GitHub Actions tooling: create workflows via a guided brainstorm, lint + security-review them, SHA-pin and maintain actions, run locally, and trigger/monitor runs on GitHub — all from Claude Code. |
+| [`midnight-reports`](./plugins/midnight-reports) | Generates self-contained HTML pull-request activity reports for any GitHub repo (`/midnight-reports:pr <repo> [timeframe]`): metrics dashboard, action queue, and narrative commentary, published as an Artifact, with an optional paste-ready Slack summary. |
 
 ## Layout
 
