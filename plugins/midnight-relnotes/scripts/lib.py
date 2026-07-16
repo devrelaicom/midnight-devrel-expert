@@ -38,6 +38,9 @@ def filename_to_version(filename: str, file_prefix: str) -> str | None:
         return None
     rest = stem[len(lead):]
     # dash scheme stores dots as dashes; dotted keeps dots. Detect: if it has dots, it's dotted.
+    # NOTE: the dash scheme assumes release-core-only versions (e.g. 4-1-1). A
+    # prerelease filename (4-0-0-beta-6) would round-trip to "4.0.0.beta.6" —
+    # relnote filenames are stable releases only today, so this stays latent.
     return rest if "." in rest else rest.replace("-", ".")
 
 def iso_now() -> str:

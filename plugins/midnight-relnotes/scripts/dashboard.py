@@ -4,8 +4,13 @@ import json, os, argparse, html
 COLS = ["Item", "Latest relnote", "Latest stable", "Behind", "Stale", "Prerelease"]
 
 def _cells(r):
+    # Untracked/ignored items (crates:* source, deprecated dirs) have no
+    # meaningful stable/behind — label them rather than showing a misleading 0.
+    if not r.get("tracked", True):
+        label = r.get("tracked_label", "untracked")
+        return [r["item"], r.get("latest_relnote") or "—", label, "—", label, r.get("prerelease") or "—"]
     return [r["item"], r.get("latest_relnote") or "—", r.get("latest_stable") or "—",
-            str(r["behind"]), "yes" if r["stale"] else "no", r.get("prerelease") or "—"]
+            str(r.get("behind", 0)), "yes" if r.get("stale") else "no", r.get("prerelease") or "—"]
 
 def render_markdown(rows):
     out = ["# Release-note status", "", "| " + " | ".join(COLS) + " |",
@@ -22,7 +27,7 @@ def render_html(rows):
             + "".join(f"<th>{c}</th>" for c in COLS) + "</tr>\n")
     body = ""
     for r in rows:
-        cls = ' class="stale"' if r["stale"] else ""
+        cls = ' class="stale"' if r.get("tracked", True) and r.get("stale") else ""
         body += "<tr" + cls + ">" + "".join(f"<td>{html.escape(c)}</td>" for c in _cells(r)) + "</tr>\n"
     return head + body + "</table>\n"
 

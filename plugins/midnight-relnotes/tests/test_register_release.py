@@ -1,4 +1,4 @@
-import os, scripts.register_release as reg
+import os, pytest, scripts.register_release as reg
 
 FIX = os.path.join(os.path.dirname(__file__), "fixtures", "DynamicListSample.js")
 
@@ -37,3 +37,21 @@ def test_register_into_empty_list_no_prior_latest():
 
 def test_js_string_escapes_newline():
     assert reg.js_string("a\nb") == "'a\\nb'"
+
+def test_js_string_escapes_cr_and_line_separators():
+    # CRLF-authored notes and pasted U+2028/U+2029 are JS LineTerminators too.
+    assert reg.js_string("a\r\nb") == "'a\\r\\nb'"
+    assert reg.js_string("a" + chr(0x2028) + "b") == "'a\\u2028b'"
+    assert reg.js_string("a" + chr(0x2029) + "b") == "'a\\u2029b'"
+
+def test_register_missing_anchor_raises_clear_error():
+    with pytest.raises(ValueError, match="anchor"):
+        reg.register("const somethingElse = [];", _rel())
+
+def test_register_non_latest_does_not_demote():
+    src = open(FIX).read()
+    backport = {**_rel(), "status": "SUPPORTED"}
+    out = reg.register(src, backport)
+    # the pre-existing LATEST must be left intact when the new note isn't LATEST
+    assert out.count("status: 'LATEST'") == 1
+    assert out.index("'4.1.1'") < out.index("'4.0.4'")

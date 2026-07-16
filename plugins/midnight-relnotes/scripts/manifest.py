@@ -3,20 +3,16 @@
 import json, sys, os, argparse
 from . import lib
 
-# Seed mapping. Extend as new items are added. file_prefix defaults to dir basename.
-SEED = {
-    "midnight-js": {"repo": "midnightntwrk/midnight-js", "version_source": "npm:@midnight-ntwrk/midnight-js",
-                    "tag_prefix": "v", "filename_scheme": "dash", "dynamiclist": "src/components/DynamicListMidnightJS.js"},
-    "ledger": {"repo": "midnightntwrk/midnight-ledger", "version_source": "gh-release",
-               "tag_prefix": "ledger-", "filename_scheme": "dash", "dynamiclist": "src/components/DynamicListLedger.js"},
-    "midnight-indexer": {"repo": "midnightntwrk/midnight-indexer", "version_source": "gh-release",
-                         "tag_prefix": "midnight-indexer-", "filename_scheme": "dash", "dynamiclist": "src/components/DynamicListMidnightIndexer.js"},
-    "midnight-wallet-api": {"repo": "midnightntwrk/midnight-wallet", "version_source": "gh-release",
-                            "tag_prefix": "", "filename_scheme": "dash", "dynamiclist": "src/components/DynamicListMidnightWalletAPI.js"},
-    "compact": {"repo": "LFDT-Minokawa/compact", "version_source": "gh-release",
-                "tag_prefix": "compactc-v", "filename_scheme": "dotted", "dynamiclist": "src/components/DynamicListCompact.js",
-                "file_prefix": "toolchain"},
-}
+# Seed mapping lives in scripts/seed.json (data, not code): one entry per
+# docs/relnotes/<dir>, keyed by dir basename. file_prefix defaults to basename.
+# Keys starting with "_" (e.g. "_comment") are documentation, not mappings.
+SEED_PATH = os.path.join(os.path.dirname(__file__), "seed.json")
+
+def load_seed(path=SEED_PATH):
+    with open(path) as fh:
+        return {k: v for k, v in json.load(fh).items() if not k.startswith("_")}
+
+SEED = load_seed()
 
 def unmapped_dirs(manifest_dirs, actual_dirs):
     mapped = set(manifest_dirs)
@@ -42,6 +38,8 @@ def main(argv=None):
     ap.add_argument("--out", required=True)
     a = ap.parse_args(argv)
     root = os.path.join(a.docs_repo, "docs", "relnotes")
+    if not os.path.isdir(root):
+        raise SystemExit(f"no docs/relnotes under {a.docs_repo!r} — run from inside a midnight-docs checkout")
     actual = [f"docs/relnotes/{name}" for name in sorted(os.listdir(root))
               if os.path.isdir(os.path.join(root, name))]
     manifest = build(actual)
@@ -49,7 +47,7 @@ def main(argv=None):
     mapped = [it["dir"] for it in manifest["items"]]
     missing = unmapped_dirs(mapped, actual)
     if missing:
-        sys.stderr.write("UNMAPPED (add to SEED): " + ", ".join(missing) + "\n")
+        sys.stderr.write("UNMAPPED (add to scripts/seed.json): " + ", ".join(missing) + "\n")
     print(f"{len(manifest['items'])} items -> {a.out}")
 
 if __name__ == "__main__":
