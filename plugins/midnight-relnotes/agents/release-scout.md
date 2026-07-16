@@ -26,7 +26,11 @@ the absolute `DOCS_REPO` path.
 1. Latest stable + prerelease: `python3 -m scripts.latest_release '<item-json>'`
    (run from `${CLAUDE_PLUGIN_ROOT}`).
 2. Highest existing relnote: `python3 -m scripts.latest_relnote "$DOCS_REPO/<dir>" <file_prefix>`.
-3. Verdict: `python3 -m scripts.staleness '<relnote>' '<stable>' '<all_stable>'`.
+3. Verdict: extract the bare values first — the relnote **version** string from step
+   2's object (or `null` if step 2 returned `null`), and the **stable** string and
+   **all_stable** array from step 1's object — then run
+   `python3 -m scripts.staleness '<relnote-version-or-null>' '<stable-or-null>' '<all_stable-json-array>'`.
+   Do not pass the raw step-1/step-2 JSON objects.
 
 ## Output
 

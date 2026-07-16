@@ -5,7 +5,7 @@ import json, sys
 ANCHOR = "const releases = ["
 
 def js_string(s: str) -> str:
-    return "'" + s.replace("\\", "\\\\").replace("'", "\\'") + "'"
+    return "'" + s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n") + "'"
 
 def render_release(rel: dict) -> str:
     lines = ["  {",
@@ -30,7 +30,9 @@ def register(js_text: str, rel: dict) -> str:
     demoted = js_text[:idx] + "\n" + render_release(rel) + js_text[idx:]
     # demote the FIRST pre-existing LATEST, which is now the second LATEST in the string
     first = demoted.index("status: 'LATEST'")
-    second = demoted.index("status: 'LATEST'", first + 1)
+    second = demoted.find("status: 'LATEST'", first + 1)
+    if second == -1:
+        return demoted  # no pre-existing LATEST to demote (first note for this component)
     return demoted[:second] + "status: 'SUPPORTED'" + demoted[second + len("status: 'LATEST'"):]
 
 def main(argv=None):

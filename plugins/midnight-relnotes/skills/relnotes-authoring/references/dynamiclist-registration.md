@@ -16,9 +16,12 @@ Every note prepends a release object to
   "summary": "<one line, mirrors High-level summary>",
   "details": ["<mirrors Summary of updates bullets>"],
   "artifacts": [{ "name": "NPM Package", "url": "https://www.npmjs.com/search?q=midnight-ntwrk" }],
-  "link": "/relnotes/<dir-basename>/<file_prefix>-<version-dashed>"
+  "link": "/relnotes/<dir-basename>/<filename-stem>"
 }
 ```
+
+The final `link` segment is the note's filename stem — dashed for dash-scheme
+items (`midnight-js-4-1-1`), dotted for dotted-scheme items (`toolchain-0.31.0`).
 
 The script prepends the object and rewrites the prior first `LATEST` to
 `SUPPORTED`, so exactly one `LATEST` remains.

@@ -28,3 +28,12 @@ def test_register_prepends_and_demotes():
     assert out.count("status: 'LATEST'") == 1
     assert "status: 'SUPPORTED'" in out
     assert out.index("status: 'LATEST'") < out.index("status: 'SUPPORTED'")
+
+def test_register_into_empty_list_no_prior_latest():
+    src = "const releases = [\n];\n"
+    out = reg.register(src, _rel())
+    assert out.count("status: 'LATEST'") == 1
+    assert "status: 'SUPPORTED'" not in out
+
+def test_js_string_escapes_newline():
+    assert reg.js_string("a\nb") == "'a\\nb'"
