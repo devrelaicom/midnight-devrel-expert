@@ -2,7 +2,7 @@
   "name": "midnight-devrel-expert",
   "metadata": {
     "version": "0.1.0",
-    "description": "A marketplace of Claude Code plugins for Midnight developer-relations and ecosystem maintenance. Currently ships midnight-docs-drift, which detects and repairs documentation that has drifted behind the code it describes."
+    "description": "A marketplace of Claude Code plugins for Midnight developer-relations and ecosystem maintenance. Ships midnight-docs-drift (detects and repairs documentation that has drifted behind the code it describes) and gha (full-lifecycle GitHub Actions workflow tooling)."
   },
   "owner": {
     "name": "Aaron Bassett",
@@ -12,6 +12,10 @@
     {
       "name": "midnight-docs-drift",
       "source": "./plugins/midnight-docs-drift"
+    },
+    {
+      "name": "gha",
+      "source": "./plugins/gha"
     }
   ]
 }

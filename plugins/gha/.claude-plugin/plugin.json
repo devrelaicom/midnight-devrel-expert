@@ -1,0 +1,19 @@
+{
+  "name": "gha",
+  "version": "0.1.1",
+  "description": "Create, review, maintain, locally test, trigger, and monitor GitHub Actions workflows from Claude Code",
+  "author": {
+    "name": "Aaron Bassett",
+    "email": "aaron@devrel-ai.com"
+  },
+  "homepage": "https://github.com/devrelaicom/midnight-devrel-expert",
+  "repository": "https://github.com/devrelaicom/midnight-devrel-expert.git",
+  "license": "MIT",
+  "keywords": [
+    "github-actions",
+    "ci-cd",
+    "workflows",
+    "linting",
+    "security"
+  ]
+}

@@ -7,6 +7,7 @@ A marketplace of [Claude Code plugins](https://docs.anthropic.com/en/docs/claude
 | Plugin | What it does |
 |---|---|
 | [`midnight-docs-drift`](./plugins/midnight-docs-drift) | Detects `midnightntwrk/midnight-docs` pages that have drifted behind the repos they document, then drives an interactive extract → classify → severity-rank → verify → fix → PR pipeline over the stale claims (via `/update-drifted-docs`). |
+| [`gha`](./plugins/gha) | Full-lifecycle GitHub Actions tooling: create workflows via a guided brainstorm, lint + security-review them, SHA-pin and maintain actions, run locally, and trigger/monitor runs on GitHub — all from Claude Code. |
 
 ## Layout
 
@@ -25,6 +26,7 @@ Add the marketplace and install a plugin from inside Claude Code:
 ```
 /plugin marketplace add devrelaicom/midnight-devrel-expert
 /plugin install midnight-docs-drift@midnight-devrel-expert
+/plugin install gha@midnight-devrel-expert
 ```
 
 `midnight-docs-drift` soft-depends on the [`midnight-fact-check`](https://github.com/devrelaicom/midnight-expert) and [`midnight-verify`](https://github.com/devrelaicom/midnight-expert) plugins (from the `midnight-expert` marketplace) for claim extraction, classification, and verification, and expects `gh` authenticated with org read access.
