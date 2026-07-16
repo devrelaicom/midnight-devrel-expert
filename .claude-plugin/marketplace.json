@@ -1,0 +1,17 @@
+{
+  "name": "midnight-devrel-expert",
+  "metadata": {
+    "version": "0.1.0",
+    "description": "A marketplace of Claude Code plugins for Midnight developer-relations and ecosystem maintenance. Currently ships midnight-docs-drift, which detects and repairs documentation that has drifted behind the code it describes."
+  },
+  "owner": {
+    "name": "Aaron Bassett",
+    "email": "aaron@devrel-ai.com"
+  },
+  "plugins": [
+    {
+      "name": "midnight-docs-drift",
+      "source": "./plugins/midnight-docs-drift"
+    }
+  ]
+}
