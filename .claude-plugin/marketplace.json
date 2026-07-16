@@ -16,6 +16,10 @@
     {
       "name": "gha",
       "source": "./plugins/gha"
+    },
+    {
+      "name": "midnight-reports",
+      "source": "./plugins/midnight-reports"
     }
   ]
 }
