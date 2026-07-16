@@ -59,3 +59,27 @@ def test_narrative_sections_present():
     assert "New pages" in out
     assert "Vercel is noise" in out
     assert "Watch this" in out
+
+def test_queue_reconciles_noise_only_pr():
+    # A PR whose ONLY hard failing check is noise. enrich stored it as CI-blocked (priority 2,
+    # noise-blind); the queue must recompute it to its review-state bucket and stay self-consistent.
+    data = {
+        "meta": {"repo": "o/n", "since": "2026-07-02", "generatedAt": "2026-07-16T00:00:00+00:00",
+                 "totals": {"total": 1, "open": 1, "merged": 0, "closed": 0, "human": 1, "bot": 0}},
+        "checkFailureRates": [],
+        "prs": [{
+            "number": 42, "title": "noise only", "url": "https://x/42", "state": "OPEN",
+            "isDraft": False, "baseRefName": "main", "author": "alice", "authorType": "human",
+            "reviewDecision": "REVIEW_REQUIRED", "additions": 1, "deletions": 0, "changedFiles": 1,
+            "failingChecks": [{"name": "Vercel", "conclusion": "FAILURE"}], "ciStatusRaw": "failing",
+            "humanComments": 0, "reviews": [], "ageDays": 1, "idleDays": 0,
+            "blockedOn": "author (CI)", "priority": 2, "action": "Fix failing CI checks"}],
+    }
+    narrative = {"executive_summary": "", "themes": [], "observations": [], "watch_items": [],
+                 "noise_checks": ["Vercel"], "real_ci_blocked": []}
+    q = rd.render_queue(data, narrative)
+    assert "Fix failing CI checks" not in q
+    assert "author (CI)" not in q
+    assert "p-ci" not in q
+    assert "Needs a maintainer review" in q
+    assert "CI green" in q

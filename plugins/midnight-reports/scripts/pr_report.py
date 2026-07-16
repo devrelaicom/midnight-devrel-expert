@@ -4,7 +4,7 @@ Subcommands:
   fetch  --repo owner/name --since YYYY-MM-DD [--limit N] --out report-data.json
   build  --data report-data.json --narrative narrative.json --template template.html --out report.html
 """
-import argparse, json, subprocess, sys
+import argparse, json, subprocess
 from datetime import datetime, timezone
 from . import lib, enrich, render
 

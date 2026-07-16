@@ -13,6 +13,26 @@ _REVIEW_SHORT = {"APPROVED": ("good", "approved"), "CHANGES_REQUESTED": ("warn",
                  "REVIEW_REQUIRED": ("accent", "review req."), "NONE": ("", "—")}
 _QCLASS = {1: "p-merge", 2: "p-ci", 3: "p-review", 4: "p-author", 5: "p-bot"}
 
+def _queue_triage(p, noise):
+    """Recompute queue priority/class/blockedOn/action at RENDER time, honoring the model's
+    noise judgment. enrich's mechanical triage is noise-blind (computed before noise is known),
+    so a PR whose only hard failure is a noise check would otherwise show 'Fix failing CI checks'
+    while its CI chip renders green. Keying off REAL (non-noise) hard failures keeps the card
+    self-consistent and consistent with render_table."""
+    real_hard = [c for c in p["failingChecks"] if c["conclusion"] != "PENDING" and c["name"] not in noise]
+    rd = p.get("reviewDecision") or "NONE"
+    if real_hard:
+        return 2, "p-ci", "author (CI)", "Fix failing CI checks"
+    if rd == "APPROVED":
+        return 1, "p-merge", "maintainer", "Approved - ready to merge"
+    if rd == "CHANGES_REQUESTED":
+        return 4, "p-author", "author", "Author to address review feedback"
+    if p["authorType"] == "bot":
+        return 5, "p-bot", "maintainer", "Dependency bump - review & merge"
+    if rd == "REVIEW_REQUIRED":
+        return 3, "p-review", "maintainer", "Needs a maintainer review"
+    return 6, "p-review", "maintainer", "Triage"
+
 def esc(s):
     return html.escape("" if s is None else str(s), quote=True)
 
@@ -121,20 +141,21 @@ def _ci_chip_full(pr, noise):
 
 def render_queue(data, narrative):
     noise = set(narrative.get("noise_checks") or [])
+    triaged = [(p, _queue_triage(p, noise)) for p in _open(data)]
+    triaged.sort(key=lambda pt: pt[1][0])
     out = []
-    for p in sorted(_open(data), key=lambda x: x["priority"]):
-        cls = _QCLASS.get(p["priority"], "p-review")
+    for p, (prio, cls, blocked, action) in triaged:
         rc, rt = _REVIEW.get(p["reviewDecision"], ("", ""))
         author = ("\U0001f916 " if p["authorType"] == "bot" else "") + p["author"]
         foot = (_chip("", author) + _chip(rc, rt) + _ci_chip_full(p, noise)
-                + _chip("", "blocked on: " + str(p["blockedOn"]))
+                + _chip("", "blocked on: " + blocked)
                 + _chip("", "age %dd · idle %dd" % (p["ageDays"], p["idleDays"])))
         out.append('<div class="qcard %s"><div class="q-top">'
                    '<span class="q-num"><a href="%s" target="_blank" rel="noopener">#%d</a></span>'
                    '<span class="q-action">%s</span></div>'
                    '<div class="q-title"><a href="%s" target="_blank" rel="noopener">%s</a></div>'
                    '<div class="q-foot">%s</div></div>'
-                   % (cls, esc(p["url"]), p["number"], esc(p["action"]),
+                   % (cls, esc(p["url"]), p["number"], esc(action),
                       esc(p["url"]), esc(p["title"]), foot))
     return "\n".join(out)
 

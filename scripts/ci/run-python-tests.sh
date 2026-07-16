@@ -21,7 +21,7 @@ for plugin in "$PLUGINS_DIR"/*/; do
   if find "$plugin" -name 'test_*.py' -not -path '*/node_modules/*' -print -quit | grep -q .; then
     any=1
     echo "==> pytest: $name"
-    if ( cd "$plugin" && python3 -m pytest -q ); then
+    if ( cd "$plugin" && python3 -m pytest -q --ignore=node_modules ); then
       summary+=("$name: PASS")
     else
       summary+=("$name: FAIL"); failed=1
