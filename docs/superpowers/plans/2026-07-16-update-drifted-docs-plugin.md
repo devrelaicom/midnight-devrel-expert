@@ -499,6 +499,8 @@ git commit -m "feat: docs->repo inference (linked + tech-rule inferred)"
 
 ### Task 5: `severity_pass.py` — heuristic blast-radius severity
 
+> **Amendment (2026-07-16, post-review, user-approved):** the HIGH tier below was tightened after the Task 5 review demonstrated it over-fired on bare English words (`disclose`, `returns`, `witness`, `must be`, `syntax`) in conceptual prose. The shipped implementation: splits HIGH into `HIGH_STRICT` (inherently code-exact, fires unconditionally) and `HIGH_CONTEXTUAL` (bare words that only reach HIGH when a code marker co-occurs, via a `CODE_CONTEXT` regex); drops generic `must be`/`is required` from HIGH; makes `is_unclassified` cap a claim at `low` unless a HIGH code-exact fact fired; and adds tests covering all five outcome branches plus the two new behaviors. The committed code (see the commit for this task) is authoritative; the code block below is the pre-amendment version kept for history.
+
 **Files:**
 - Create: `scripts/severity_pass.py`
 - Test: `tests/test_severity_pass.py`
