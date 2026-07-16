@@ -18,7 +18,7 @@ def validate(mdx_text, filename, file_prefix, version, scheme, dynamiclist_text)
     for section in REQUIRED_SECTIONS:
         if section not in mdx_text:
             problems.append(f"missing required section {section!r}")
-    if version not in dynamiclist_text:
+    if f"'{version}'" not in dynamiclist_text:
         problems.append(f"version {version!r} not registered in DynamicList component")
     return problems
 

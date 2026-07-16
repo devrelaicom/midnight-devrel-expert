@@ -42,3 +42,9 @@ def test_missing_section_flagged():
 def test_unregistered_version_flagged():
     probs = val.validate(GOOD_MDX, "midnight-js-4-1-1.mdx", "midnight-js", "4.1.1", "dash", "no registration here")
     assert any("DynamicList" in p for p in probs)
+
+def test_shorter_version_not_falsely_registered():
+    # only 4.1.10 is registered; validating 4.1.1 must be flagged, not falsely matched
+    js = "version: '4.1.10', link: '/relnotes/midnight-js/midnight-js-4-1-10',"
+    probs = val.validate(GOOD_MDX, "midnight-js-4-1-1.mdx", "midnight-js", "4.1.1", "dash", js)
+    assert any("DynamicList" in p for p in probs)
