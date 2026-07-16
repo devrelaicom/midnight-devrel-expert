@@ -1,9 +1,39 @@
 # Local research / planning artifacts — never committed
 .research/
 
+# Superpowers SDD scratch (per-run task briefs/reports/diffs) + agent workspaces
+.superpowers/
+.claude/
+.worktrees/
+reviews/
+
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+*.egg-info/
 
-# Superpowers SDD scratch (per-run task briefs/reports/diffs)
-.superpowers/
+# Node
+node_modules/
+*.log
+npm-debug.log*
+.npm
+
+# macOS / editors
+.DS_Store
+._*
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# General
+*.bak
+*.tmp

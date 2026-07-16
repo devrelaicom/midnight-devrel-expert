@@ -1,8 +1,0 @@
-{
-  "name": "midnight-docs-drift",
-  "version": "0.1.0",
-  "description": "Detect and repair drifted midnightntwrk/midnight-docs pages via /update-drifted-docs.",
-  "commands": ["commands/update-drifted-docs.md"],
-  "skills": ["skills/docs-drift-methodology"],
-  "notes": "Soft-depends on the midnight-fact-check and midnight-verify plugins being installed."
-}

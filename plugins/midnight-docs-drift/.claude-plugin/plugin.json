@@ -1,0 +1,23 @@
+{
+  "name": "midnight-docs-drift",
+  "version": "0.1.0",
+  "description": "Detect and repair drifted midnightntwrk/midnight-docs pages. Scans active org repos (incl. LFDT-Minokawa/compact), maps docs pages to the repos they document, flags pages older than their sources, then extracts, classifies, severity-ranks, verifies, and fixes stale claims through the interactive /update-drifted-docs command — reusing the midnight-fact-check and midnight-verify plugins.",
+  "author": {
+    "name": "Aaron Bassett",
+    "email": "aaron@devrel-ai.com"
+  },
+  "homepage": "https://github.com/devrelaicom/midnight-devrel-expert",
+  "repository": "https://github.com/devrelaicom/midnight-devrel-expert.git",
+  "license": "MIT",
+  "keywords": [
+    "midnight",
+    "documentation",
+    "docs-drift",
+    "staleness",
+    "fact-check",
+    "verification",
+    "compact",
+    "github",
+    "maintenance"
+  ]
+}
