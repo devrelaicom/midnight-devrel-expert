@@ -26,8 +26,9 @@ it maps to. Last-published = latest release `published_at`, else default-branch 
 
 ## Severity tiers (post-classification)
 Severity = blast radius if the claim is stale/wrong (NOT probability of being wrong).
-- **high** — code-exact facts a developer copies verbatim: signatures, type expressions,
-  imports/packages, keywords/operators/pragma, error/status codes, CLI flags, ZKIR opcodes,
-  security primitives. Wrong → build breaks or security impact.
-- **medium** — specific behaviour of a named construct, not a verbatim signature.
-- **low** — conceptual/architectural prose with no code-exactness.
+- **high** — code-exact facts a developer copies verbatim. Two kinds:
+  - *unconditional* (always high): type expressions, imports/packages, `pragma`, error/status codes, CLI flags, ZKIR opcodes, and named security primitives (persistentHash / transientHash / persistentCommit / transientCommit, `disclose(...)`).
+  - *contextual* (high only when an inline code marker — a backtick span, call syntax, a snake_case/camelCase identifier, `@midnight-ntwrk`, or an opening generic like `<T` — co-occurs in the same claim): signatures / `returns`, keywords / operators, and bare security words (witness, nullifier, sealed, bare `disclose`, "publicly visible"). Without a code marker these fall through to medium/low.
+  Wrong → build breaks or security impact.
+- **medium** — specific behaviour of a named construct (has a code token but not a verbatim signature).
+- **low** — conceptual/architectural prose with no code-exactness. A claim outside the four verified domains (compact/sdk/zkir/witness) also caps at low unless an unconditional-high signal fired.
