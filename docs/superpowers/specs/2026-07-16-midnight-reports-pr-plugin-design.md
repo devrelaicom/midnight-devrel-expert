@@ -28,6 +28,10 @@ The work splits cleanly along a **facts vs. judgment** boundary:
 The command is a **thin wrapper** around the skill so the same workflow is equally
 invocable by a human (`/midnight-reports:pr owner/name 2w`) or by the model on its own.
 
+After publishing, the model reports the headline findings + URL and **offers** a short,
+paste-ready **Slack message** for the DevRel team, composed in a vendored casual voice and
+gated on the user saying yes.
+
 ## 2. Goals / Non-goals
 
 **Goals**
@@ -38,12 +42,16 @@ invocable by a human (`/midnight-reports:pr owner/name 2w`) or by the model on i
 - Keep the deterministic data + rendering work in a **testable script**; keep the
   inference (CI-noise, narrative) in the **model**.
 - Work for **any** public/accessible GitHub repo, not just Midnight repos.
+- After publishing, offer an optional paste-ready **Slack message** for the DevRel team,
+  in a specific casual voice, following a zero-blame content rubric.
 
 **Non-goals**
 - Not a live/served dashboard; each run emits one static HTML snapshot.
 - The script does **not** classify CI failures as "noise" — that is model judgment.
 - Not a general analytics warehouse; scope is one repo, one timeframe, per run.
 - No write operations on the target repo (read-only via `gh`).
+- Does **not** post to Slack or toggle artifact visibility itself. It produces a paste-ready
+  message; the user sets link-sharing and posts it (D12).
 
 ## 3. Key decisions (decision log)
 
@@ -59,6 +67,10 @@ invocable by a human (`/midnight-reports:pr owner/name 2w`) or by the model on i
 | D8 | Narrative depth is bounded: the model reads threads for **open + notable** PRs (changes-requested, superseded, headline merges), not all PRs, to control cost. |
 | D9 | Output is **both** a published Artifact (via the Artifact tool) **and** a saved file under `${CLAUDE_PLUGIN_DATA}/<owner>/<name>/runs/<iso-ts>/`. Nothing written to cwd. |
 | D10 | `pr_report.py` gets **fixture-based unit tests** (saved `gh` JSON → assert enrichment + arg parsing), consistent with sibling plugins and marketplace CI. |
+| D11 | After publishing, the model **reports headline findings + the URL**, then **offers** an optional paste-ready Slack message. It is only composed if the user says yes. |
+| D12 | The model **cannot** toggle artifact visibility (Artifact tool exposes only `publish`/`list`; no sharing param — verified by spike). The Slack step appends the link **and** reminds the user to set the artifact to "anyone with the link" via the claude.ai share menu before posting. |
+| D13 | The Slack message is written in a **specific vendored voice** (`references/slack-voice.md`, the slack-casual profile). Zero em-dashes, inclusive/non-gendered language, no AI tropes, lead-with-the-point, bullets for multi-point. Stored as a **plain reference doc, not a registered skill** (so it never auto-triggers), and loaded by `SKILL.md` **only** when composing the Slack message. |
+| D14 | Slack summary **content rubric**: surface what matters to DevRel; flag anything surprising or urgent; **always** include a genuine good-news item; give individual cudos **only when earned and sparingly**; **never** call out an individual negatively; problems are **team-owned and zero-blame**. |
 
 ## 4. Plugin layout
 
@@ -73,6 +85,7 @@ plugins/midnight-reports/
       references/
         template.html                         # themed, interactive skeleton with injection markers
         data-contract.md                      # report-data.json + narrative.json schemas
+        slack-voice.md                        # vendored slack-casual voice profile (Slack message only)
   scripts/
     pr_report.py                              # fetch | build subcommands
     tests/
@@ -119,7 +132,30 @@ then hand off to the skill. All real logic lives in the skill + script.
 5. **Build (script).**
    `python3 -m scripts.pr_report build --data <run>/report-data.json --narrative <run>/narrative.json --out <run>/report.html`
 6. **Publish (model).** Publish `report.html` via the Artifact tool (favicon 🌙, title
-   `<repo> · PR Review Watch`); report the URL and the saved path to the user.
+   `<repo> · PR Review Watch`).
+7. **Report + offer (model).** Respond in chat with the headline findings (a few of the most
+   important, honestly framed) and the Artifact URL + saved path. Then **ask** whether the user
+   wants a short, paste-ready Slack message for the team. Stop and wait.
+8. **Slack message (model, only if yes).** Load `references/slack-voice.md` and compose a short
+   message following the content rubric (§6a) in that voice. Append the report link at the end,
+   with a one-line reminder to flip the artifact to "anyone with the link" in the claude.ai share
+   menu first (the model cannot do this itself, per D12). Deliver only the message, nothing else.
+
+### 6a. Slack summary content rubric
+
+The Slack message is for the DevRel team scanning a busy channel. Compose it to:
+- **Lead with what matters to DevRel** — the few findings that change what the team does next,
+  not a metrics dump.
+- **Flag the surprising** — anything the team likely is not aware of (e.g. a stale approved PR,
+  a CI signal that is mostly false alarms, overlapping duplicate work).
+- **Flag the urgent** — anything that should be addressed soon (e.g. an unsigned CLA blocking a
+  merge), framed as **team-owned and zero-blame**. Never attribute a problem to an individual.
+- **Always include a genuine good-news item** — real progress that shipped, stated plainly.
+- **Give individual cudos only when earned, and sparingly** — reserve call-outs for genuinely
+  exceptional work; never call out an individual for anything negative.
+- **Voice** — per `references/slack-voice.md`: zero em-dashes, inclusive/non-gendered language,
+  no AI tropes, dry and warm, bullets for multi-point content, Slack emoji shortcodes only where
+  they carry tone.
 
 ## 7. Script — I/O contracts
 
