@@ -68,9 +68,10 @@ gated on the user saying yes.
 | D9 | Output is **both** a published Artifact (via the Artifact tool) **and** a saved file under `${CLAUDE_PLUGIN_DATA}/<owner>/<name>/runs/<iso-ts>/`. Nothing written to cwd. |
 | D10 | `pr_report.py` gets **fixture-based unit tests** (saved `gh` JSON → assert enrichment + arg parsing), consistent with sibling plugins and marketplace CI. |
 | D11 | After publishing, the model **reports headline findings + the URL**, then **offers** an optional paste-ready Slack message. It is only composed if the user says yes. |
-| D12 | The model **cannot** toggle artifact visibility (Artifact tool exposes only `publish`/`list`; no sharing param — verified by spike). The Slack step appends the link **and** reminds the user to set the artifact to "anyone with the link" via the claude.ai share menu before posting. |
+| D12 | The model **cannot** toggle artifact visibility (Artifact tool exposes only `publish`/`list`; no sharing param — verified by spike). The Slack **message** ends with the report link only. The reminder to set the artifact to "anyone with the link" via the claude.ai share menu is given to the user **outside** the copyable message (at publish/offer time, steps 6–7), **never inside it** (see D15). |
 | D13 | The Slack message is written in a **specific vendored voice** (`references/slack-voice.md`, the slack-casual profile). Zero em-dashes, inclusive/non-gendered language, no AI tropes, lead-with-the-point, bullets for multi-point. Stored as a **plain reference doc, not a registered skill** (so it never auto-triggers), and loaded by `SKILL.md` **only** when composing the Slack message. |
 | D14 | Slack summary **content rubric**: surface what matters to DevRel; flag anything surprising or urgent; **always** include a genuine good-news item; give individual cudos **only when earned and sparingly**; **never** call out an individual negatively; problems are **team-owned and zero-blame**. |
+| D15 | **Output isolation (hard rule).** When the Slack message is delivered, the model's entire response is the message text and **nothing else**: no preamble, no postamble, no "here's your message", no follow-up question, no surrounding code fence. The user will `/copy` the whole response straight into Slack; any stray token gets pasted in front of colleagues. This overrides every default urge to frame or explain output. The **only** trailing content is the report link as the message's last line. Anything meant for the user and **not** the channel (e.g. the enable-sharing reminder) must be said in an **earlier** turn, before the message is composed. |
 
 ## 4. Plugin layout
 
@@ -134,12 +135,16 @@ then hand off to the skill. All real logic lives in the skill + script.
 6. **Publish (model).** Publish `report.html` via the Artifact tool (favicon 🌙, title
    `<repo> · PR Review Watch`).
 7. **Report + offer (model).** Respond in chat with the headline findings (a few of the most
-   important, honestly framed) and the Artifact URL + saved path. Then **ask** whether the user
-   wants a short, paste-ready Slack message for the team. Stop and wait.
+   important, honestly framed) and the Artifact URL + saved path. Include the one-time reminder
+   **here** that, to share, the artifact must be set to "anyone with the link" in the claude.ai
+   share menu (the model cannot do this itself, per D12). Then **ask** whether the user wants a
+   short, paste-ready Slack message for the team. Stop and wait.
 8. **Slack message (model, only if yes).** Load `references/slack-voice.md` and compose a short
-   message following the content rubric (§6a) in that voice. Append the report link at the end,
-   with a one-line reminder to flip the artifact to "anyone with the link" in the claude.ai share
-   menu first (the model cannot do this itself, per D12). Deliver only the message, nothing else.
+   message following the content rubric (§6a) in that voice, ending with the report link as the
+   **last line**. **Output isolation is absolute (D15):** the entire response is the message text
+   and nothing else — no preamble, no postamble, no follow-up question, no code fence, no
+   sharing reminder (that was already given in step 7). The user will `/copy` the whole response
+   into Slack.
 
 ### 6a. Slack summary content rubric
 
