@@ -17,7 +17,7 @@ One entry per relnotes directory:
 | `dir` | e.g. `docs/relnotes/midnight-js` |
 | `file_prefix` | filename stem, defaults to the dir basename (e.g. `toolchain` in the `compact` dir) |
 | `repo` | source repo, `owner/name` |
-| `version_source` | `npm:<pkg>` \| `gh-release` \| `crates` |
+| `version_source` | `npm:<pkg>` \| `gh-release` (crates is reserved for future use — not yet implemented; a non-`npm:` source resolves as a GitHub release) |
 | `tag_prefix` | stripped from GitHub tags (`v`, `ledger-`, `compactc-v`) |
 | `filename_scheme` | `dash` (`midnight-js-4-1-1`) \| `dotted` (`toolchain-0.31.0`) |
 | `dynamiclist` | `src/components/DynamicList<Item>.js` |
