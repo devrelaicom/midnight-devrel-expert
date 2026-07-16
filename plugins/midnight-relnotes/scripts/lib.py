@@ -1,5 +1,6 @@
 """Pure semver + relnote-filename helpers. Stdlib only, no I/O."""
 import re
+from datetime import datetime, timezone
 
 _PRERELEASE_RE = re.compile(r"\d+(?:\.\d+)*-")  # a release core followed by '-<ident>'
 
@@ -38,3 +39,6 @@ def filename_to_version(filename: str, file_prefix: str) -> str | None:
     rest = stem[len(lead):]
     # dash scheme stores dots as dashes; dotted keeps dots. Detect: if it has dots, it's dotted.
     return rest if "." in rest else rest.replace("-", ".")
+
+def iso_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
