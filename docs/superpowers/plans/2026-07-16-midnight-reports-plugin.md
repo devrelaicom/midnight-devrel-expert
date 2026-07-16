@@ -21,7 +21,7 @@
 - **Slack output isolation (hard rule):** when the Slack message is delivered, the entire response is the message text and nothing else — no preamble/postamble/question/code fence; only trailing content is the report link as the last line. [spec D15]
 - Slack voice: vendored `references/slack-voice.md` (slack-casual). Zero em-dashes, inclusive/non-gendered language, no AI tropes. [spec D13]
 - Slack content rubric: lead with what matters to DevRel; flag surprising/urgent (team-owned, zero-blame, never pin a problem on a person); always a genuine good-news item; individual cudos only when earned and sparingly; never a negative individual call-out. [spec D14]
-- ASCII only in generated HTML/JS source except intentional unicode via escapes; straight quotes.
+- The **HTML report** may use unicode glyphs freely (arrows `→`, middots `·`, em-dash in prose, `🌙`, `Ⓥ`, `💬`). The **Slack message** must be plain ASCII per `slack-voice.md`: straight quotes, `->` not an arrow glyph, no smart quotes, and (hard rule) **zero em-dashes**.
 
 ---
 
