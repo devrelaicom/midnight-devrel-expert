@@ -32,6 +32,24 @@ Add the marketplace and install a plugin from inside Claude Code:
 
 `midnight-docs-drift` soft-depends on the [`midnight-fact-check`](https://github.com/devrelaicom/midnight-expert) and [`midnight-verify`](https://github.com/devrelaicom/midnight-expert) plugins (from the `midnight-expert` marketplace) for claim extraction, classification, and verification, and expects `gh` authenticated with org read access.
 
+## Adding Python tests to your plugin
+
+CI runs one shared runner (`scripts/ci/run-python-tests.sh`) that discovers and runs Python
+tests for every plugin. There is no per-plugin workflow to set up. To opt in:
+
+1. Put importable code in `plugins/<name>/scripts/` as a package (add an empty `scripts/__init__.py`).
+2. Put tests in `plugins/<name>/scripts/tests/` (with an empty `__init__.py`) or
+   `plugins/<name>/tests/`, named `test_*.py`, importing your code via the `scripts` package
+   (e.g. `import scripts.mymodule as m`).
+3. That is all. The runner does `cd plugins/<name> && python3 -m pytest` for any plugin containing
+   `test_*.py`, so `import scripts.*` resolves and each plugin's tests run isolated from siblings.
+
+Run them all locally the same way CI does:
+
+```
+bash scripts/ci/run-python-tests.sh
+```
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
