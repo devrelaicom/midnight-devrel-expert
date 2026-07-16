@@ -1,0 +1,13 @@
+{
+  "name": "midnight-reports",
+  "version": "0.1.0",
+  "description": "Generate self-contained HTML pull-request activity reports for any GitHub repo. /midnight-reports:pr <repo> [timeframe] fetches PRs via gh, computes CI/triage/age facts (leaving CI-noise judgment to the model), renders a themed dashboard-plus-narrative report, publishes it as an Artifact, and offers a paste-ready Slack summary in a zero-blame casual voice.",
+  "author": {
+    "name": "Aaron Bassett",
+    "email": "aaron@devrel-ai.com"
+  },
+  "homepage": "https://github.com/devrelaicom/midnight-devrel-expert",
+  "repository": "https://github.com/devrelaicom/midnight-devrel-expert.git",
+  "license": "MIT",
+  "keywords": ["midnight", "github", "pull-requests", "report", "dashboard", "devrel", "gh", "artifact"]
+}

@@ -1,0 +1,693 @@
+<title>midnight-docs · PR Review Watch</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-2: #eef0f7;
+    --surface-3: #e6e8f2;
+    --border: #dcdfeb;
+    --border-strong: #c6cadd;
+    --ink: #14141c;
+    --ink-2: #4c4d5e;
+    --ink-3: #7a7c90;
+    --accent: #5b4fe0;
+    --accent-soft: #ece9fd;
+    --good: #0a8a0a;
+    --good-ink: #0a7a0a;
+    --warning: #b9790a;
+    --serious: #c85f38;
+    --critical: #c23434;
+    --good-bg: #e6f4e6;
+    --warn-bg: #fbf1dc;
+    --serious-bg: #fbeae2;
+    --crit-bg: #f9e5e5;
+    --neutral-bg: #eceef5;
+    --shadow: 0 1px 2px rgba(20,20,40,.05), 0 4px 16px rgba(20,20,40,.04);
+    --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #101019;
+      --surface: #1a1a25;
+      --surface-2: #22222f;
+      --surface-3: #2b2b3a;
+      --border: #2c2c3b;
+      --border-strong: #3a3a4d;
+      --ink: #f2f2f7;
+      --ink-2: #b3b4c4;
+      --ink-3: #82849a;
+      --accent: #9a90ff;
+      --accent-soft: #26234a;
+      --good: #35c035;
+      --good-ink: #4fd04f;
+      --warning: #fab219;
+      --serious: #ec835a;
+      --critical: #f06565;
+      --good-bg: #16301a;
+      --warn-bg: #362a12;
+      --serious-bg: #35211a;
+      --crit-bg: #391c1c;
+      --neutral-bg: #262636;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #f6f7fb; --surface: #ffffff; --surface-2: #eef0f7; --surface-3: #e6e8f2;
+    --border: #dcdfeb; --border-strong: #c6cadd; --ink: #14141c; --ink-2: #4c4d5e; --ink-3: #7a7c90;
+    --accent: #5b4fe0; --accent-soft: #ece9fd;
+    --good: #0a8a0a; --good-ink: #0a7a0a; --warning: #b9790a; --serious: #c85f38; --critical: #c23434;
+    --good-bg: #e6f4e6; --warn-bg: #fbf1dc; --serious-bg: #fbeae2; --crit-bg: #f9e5e5; --neutral-bg: #eceef5;
+    --shadow: 0 1px 2px rgba(20,20,40,.05), 0 4px 16px rgba(20,20,40,.04);
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #101019; --surface: #1a1a25; --surface-2: #22222f; --surface-3: #2b2b3a;
+    --border: #2c2c3b; --border-strong: #3a3a4d; --ink: #f2f2f7; --ink-2: #b3b4c4; --ink-3: #82849a;
+    --accent: #9a90ff; --accent-soft: #26234a;
+    --good: #35c035; --good-ink: #4fd04f; --warning: #fab219; --serious: #ec835a; --critical: #f06565;
+    --good-bg: #16301a; --warn-bg: #362a12; --serious-bg: #35211a; --crit-bg: #391c1c; --neutral-bg: #262636;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--font); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 80px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* Header */
+  header.masthead {
+    display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+    gap: 20px; padding-bottom: 22px; margin-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .moon { width: 12px; height: 12px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 32%, var(--accent) 0 46%, transparent 52%),
+                radial-gradient(circle at 68% 50%, var(--bg) 0 42%, var(--accent) 44%);
+    box-shadow: 0 0 10px 0 color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  h1 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -.02em; line-height: 1.05; }
+  .subtitle { color: var(--ink-2); font-size: 15px; margin-top: 8px; max-width: 60ch; }
+  .meta-block { text-align: right; font-family: var(--mono); font-size: 12.5px; color: var(--ink-3); }
+  .meta-block strong { color: var(--ink); font-weight: 600; }
+  .theme-toggle {
+    margin-top: 10px; font-family: var(--mono); font-size: 12px; cursor: pointer;
+    background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border);
+    border-radius: 7px; padding: 5px 10px;
+  }
+  .theme-toggle:hover { border-color: var(--border-strong); color: var(--ink); }
+
+  section { margin-top: 34px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .sec-head h2 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+  .sec-head .count { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+  .sec-note { color: var(--ink-2); font-size: 13.5px; margin: -4px 0 16px; max-width: 78ch; }
+
+  /* KPI tiles */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 16px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .tile .stripe { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .tile .k-label { font-size: 12px; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); font-weight: 600; }
+  .tile .k-num { font-family: var(--mono); font-size: 40px; font-weight: 700; letter-spacing: -.02em; line-height: 1; margin: 10px 0 8px; }
+  .tile .k-sub { font-size: 12.5px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+  .tile .k-sub b { color: var(--ink); font-weight: 600; }
+
+  /* Triage meter row */
+  .meters { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .meter {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 13px; box-shadow: var(--shadow);
+  }
+  .meter .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .meter .m-num { font-family: var(--mono); font-size: 26px; font-weight: 700; line-height: 1; }
+  .meter .m-label { font-size: 12.5px; color: var(--ink-2); }
+
+  /* Distribution bar */
+  .distro { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .distro .bar { display: flex; height: 26px; border-radius: 7px; overflow: hidden; margin: 12px 0 12px; gap: 2px; background: var(--surface); }
+  .distro .seg { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 600; color: #fff; min-width: 26px; }
+  .distro .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--ink-2); }
+  .distro .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .distro .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  /* Action queue cards */
+  .queue { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .qcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 15px 16px 14px; box-shadow: var(--shadow); border-left: 4px solid var(--border-strong);
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .qcard.p-merge { border-left-color: var(--good); }
+  .qcard.p-ci { border-left-color: var(--critical); }
+  .qcard.p-review { border-left-color: var(--accent); }
+  .qcard.p-author { border-left-color: var(--warning); }
+  .qcard.p-bot { border-left-color: var(--ink-3); }
+  .qcard .q-top { display: flex; align-items: baseline; gap: 8px; justify-content: space-between; }
+  .qcard .q-num { font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--accent); }
+  .qcard .q-action { font-size: 13px; font-weight: 700; }
+  .qcard .q-title { font-size: 13.5px; color: var(--ink); line-height: 1.35; }
+  .qcard .q-title a { color: var(--ink); }
+  .qcard .q-title a:hover { color: var(--accent); }
+  .qcard .q-foot { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-top: 2px; }
+
+  /* Chips */
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono);
+    font-size: 11.5px; font-weight: 600; padding: 2.5px 8px; border-radius: 20px;
+    border: 1px solid var(--border-strong); background: var(--neutral-bg); color: var(--ink-2); white-space: nowrap;
+  }
+  .chip .cdot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .chip.good { background: var(--good-bg); color: var(--good-ink); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+  .chip.warn { background: var(--warn-bg); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 40%, transparent); }
+  .chip.serious { background: var(--serious-bg); color: var(--serious); border-color: color-mix(in srgb, var(--serious) 40%, transparent); }
+  .chip.crit { background: var(--crit-bg); color: var(--critical); border-color: color-mix(in srgb, var(--critical) 40%, transparent); }
+  .chip.accent { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+
+  /* Table + filters */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 14px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fbtn {
+    font-family: var(--mono); font-size: 12.5px; padding: 6px 12px; border-radius: 8px; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border); color: var(--ink-2);
+  }
+  .fbtn:hover { border-color: var(--border-strong); color: var(--ink); }
+  .fbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  :root[data-theme="dark"] .fbtn[aria-pressed="true"], @media (prefers-color-scheme: dark) { }
+  .search {
+    margin-left: auto; font-family: var(--font); font-size: 13px; padding: 7px 12px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--ink); min-width: 200px;
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; min-width: 880px; }
+  thead th {
+    text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3);
+    font-weight: 600; padding: 12px 12px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+    position: sticky; top: 0; z-index: 1;
+  }
+  tbody td { padding: 11px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.c-num { font-family: var(--mono); font-weight: 700; white-space: nowrap; }
+  td.c-num a { color: var(--accent); }
+  td.c-title { min-width: 300px; }
+  td.c-title .t-main { color: var(--ink); font-weight: 500; }
+  td.c-title .t-sub { color: var(--ink-3); font-size: 11.5px; font-family: var(--mono); margin-top: 2px; }
+  td.c-author { font-family: var(--mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+  td.c-author .bot { color: var(--ink-3); }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .diff-add { color: var(--good-ink); }
+  .diff-del { color: var(--critical); }
+  .state-pill { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+  .state-pill .sq { width: 8px; height: 8px; border-radius: 2px; }
+  .s-OPEN .sq { background: var(--good); } .s-OPEN { color: var(--good-ink); }
+  .s-MERGED .sq { background: var(--accent); } .s-MERGED { color: var(--accent); }
+  .s-CLOSED .sq { background: var(--ink-3); } .s-CLOSED { color: var(--ink-3); }
+  .hidden { display: none !important; }
+  .empty-note { padding: 26px; text-align: center; color: var(--ink-3); font-size: 13px; }
+
+  footer { margin-top: 42px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--ink-3); font-size: 12px; font-family: var(--mono); display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; }
+
+  /* ---- Report / narrative layer ---- */
+  .lede {
+    background: linear-gradient(180deg, var(--accent-soft), transparent 140%);
+    border: 1px solid var(--border); border-left: 4px solid var(--accent);
+    border-radius: 14px; padding: 22px 26px; margin-top: 26px; box-shadow: var(--shadow);
+  }
+  .lede .eyebrow { font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 10px; }
+  .lede p { margin: 0 0 12px; font-size: 15.5px; line-height: 1.62; color: var(--ink); max-width: 74ch; }
+  .lede p:last-child { margin-bottom: 0; }
+  .lede p.dek { color: var(--ink-2); font-size: 14.5px; }
+  .lede strong { font-weight: 700; }
+  .lede a { font-weight: 600; }
+
+  /* Themes grid */
+  .themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .theme {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 15px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 7px;
+  }
+  .theme .t-hd { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .theme .t-name { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+  .theme .t-count { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+  .theme p { margin: 0; font-size: 12.8px; line-height: 1.5; color: var(--ink-2); }
+  .theme .t-prs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+  .prref { font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: var(--accent); padding: 1px 6px; border-radius: 5px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent); }
+  .prref:hover { text-decoration: none; background: var(--accent); color: #fff; }
+
+  /* Insight cards */
+  .insights { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .insight {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 19px 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px;
+  }
+  .insight .i-tag {
+    align-self: flex-start; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    font-weight: 700; padding: 3px 9px; border-radius: 6px; background: var(--neutral-bg); color: var(--ink-2);
+    border: 1px solid var(--border-strong);
+  }
+  .insight.pattern .i-tag { background: var(--accent-soft); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .insight.caution .i-tag { background: var(--warn-bg); color: var(--warning); border-color: color-mix(in srgb, var(--warning) 35%, transparent); }
+  .insight.win .i-tag { background: var(--good-bg); color: var(--good-ink); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .insight h3 { font-size: 15.5px; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+  .insight p { margin: 0; font-size: 13.4px; line-height: 1.58; color: var(--ink-2); }
+  .insight p strong, .insight p b { color: var(--ink); font-weight: 650; }
+  .insight a { font-weight: 600; }
+  .insight .i-meta { margin-top: auto; padding-top: 4px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+
+  /* Watch-items list */
+  .watch { display: flex; flex-direction: column; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+  .witem { display: flex; gap: 14px; padding: 15px 18px; border-bottom: 1px solid var(--border); }
+  .witem:last-child { border-bottom: none; }
+  .witem .w-sev { width: 4px; border-radius: 3px; flex: none; align-self: stretch; }
+  .witem.crit .w-sev { background: var(--critical); }
+  .witem.warn .w-sev { background: var(--warning); }
+  .witem.info .w-sev { background: var(--accent); }
+  .witem .w-body { display: flex; flex-direction: column; gap: 4px; }
+  .witem .w-title { font-size: 13.8px; font-weight: 650; color: var(--ink); }
+  .witem .w-desc { font-size: 12.8px; line-height: 1.5; color: var(--ink-2); }
+  .witem .w-desc a { font-weight: 600; }
+
+  @media (max-width: 860px) {
+    .themes { grid-template-columns: 1fr; }
+    .insights { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 860px) {
+    .kpis, .meters { grid-template-columns: repeat(2, 1fr); }
+    .queue { grid-template-columns: 1fr; }
+    .meta-block { text-align: left; }
+    header.masthead { align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <div class="brand-eyebrow"><span class="moon"></span>Midnight Docs · PR Review Watch</div>
+      <h1>Pull Request Status Dashboard</h1>
+      <p class="subtitle" id="subtitle"></p>
+    </div>
+    <div class="meta-block" id="metablock"></div>
+  </header>
+
+  <div class="lede">
+    <div class="eyebrow">The fortnight in review · Jul 2 – Jul 16, 2026</div>
+    <p>Two weeks of steady, high-quality documentation work. <strong>32 pull requests</strong> saw activity, <strong>15 landed</strong>, and the repo added major new surface area — a top-level <a href="https://github.com/midnightntwrk/midnight-docs/pull/1101" target="_blank" rel="noopener">Tokens category with two shielded/unshielded tutorials</a> (+1,479 lines), a new <a href="https://github.com/midnightntwrk/midnight-docs/pull/1130" target="_blank" rel="noopener">Wallet SDK API reference</a>, a <a href="https://github.com/midnightntwrk/midnight-docs/pull/1041" target="_blank" rel="noopener">runnable leaderboard example</a>, and a fix for <a href="https://github.com/midnightntwrk/midnight-docs/pull/1129" target="_blank" rel="noopener">81 broken redirect chains</a> flagged by Search Console.</p>
+    <p class="dek">The defining story of the fortnight isn't any single page — it's a <strong>maintainer workflow</strong>. Nearly every closed-unmerged PR was a community contribution that <a href="https://github.com/oduameh" target="_blank" rel="noopener">@oduameh</a> re-authored into a polished, style-compliant superseding PR, crediting the original author. That pattern is why "7 closed unmerged" reads as healthy throughput rather than rejection. The notes below unpack what shipped, the review dynamics behind it, and the handful of things worth watching.</p>
+  </div>
+
+  <section id="kpi-sec">
+    <div class="sec-head"><h2>At a glance</h2><span class="count" id="kpi-window"></span></div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section id="triage-sec">
+    <div class="sec-head"><h2>Open-PR triage</h2><span class="count" id="triage-count"></span></div>
+    <p class="sec-note">Review state of the <span id="open-n"></span> open PRs. The bare <span class="mono">Vercel</span> deployment check fails repo-wide and is treated as noise — CI health below reflects the meaningful checks (<span class="mono">build</span>, <span class="mono">deploy-preview</span>, <span class="mono">link-check</span>, <span class="mono">vale</span>, <span class="mono">license/cla</span>).</p>
+    <div class="meters" id="meters"></div>
+  </section>
+
+  <section id="distro-sec">
+    <div class="sec-head"><h2>Two-week outcomes</h2></div>
+    <div class="distro">
+      <div style="font-size:13px;color:var(--ink-2)">All <b id="d-total"></b> PRs with activity in the window, by final state</div>
+      <div class="bar" id="distro-bar"></div>
+      <div class="legend" id="distro-legend"></div>
+    </div>
+  </section>
+
+  <section id="themes-sec">
+    <div class="sec-head"><h2>What the work was about</h2><span class="count">recurring themes across the window</span></div>
+    <p class="sec-note">Activity clustered into six threads. Tutorials and reference content dominated; the rest was release plumbing, SEO/link hygiene, onboarding, and dependency upkeep.</p>
+    <div class="themes">
+      <div class="theme">
+        <div class="t-hd"><span class="t-name">Browser-dApp tutorials</span><span class="t-count">3 PRs</span></div>
+        <p>The busiest topic — three overlapping attempts at a "call a contract from a browser dApp via an injected wallet" guide. One community draft was superseded, one is in review, one is fresh.</p>
+        <div class="t-prs"><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1133" target="_blank" rel="noopener">#1133</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1126" target="_blank" rel="noopener">#1126</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1109" target="_blank" rel="noopener">#1109</a></div>
+      </div>
+      <div class="theme">
+        <div class="t-hd"><span class="t-name">New reference & tutorials</span><span class="t-count">4 PRs</span></div>
+        <p>The biggest content wins landed here: a top-level Tokens category, the Wallet SDK API reference, and a runnable leaderboard example (+300 lines of working code).</p>
+        <div class="t-prs"><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1101" target="_blank" rel="noopener">#1101</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1130" target="_blank" rel="noopener">#1130</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1041" target="_blank" rel="noopener">#1041</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1122" target="_blank" rel="noopener">#1122</a></div>
+      </div>
+      <div class="theme">
+        <div class="t-hd"><span class="t-name">Version & release plumbing</span><span class="t-count">5 PRs</span></div>
+        <p><a href="https://github.com/nstanford5" target="_blank" rel="noopener">@nstanford5</a> kept tutorials pinned to shipping releases — preprod bumps, wallet-SDK version, and "battle-versions" alignment. Small diffs, high cadence.</p>
+        <div class="t-prs"><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1124" target="_blank" rel="noopener">#1124</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1123" target="_blank" rel="noopener">#1123</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1121" target="_blank" rel="noopener">#1121</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1107" target="_blank" rel="noopener">#1107</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1117" target="_blank" rel="noopener">#1117</a></div>
+      </div>
+      <div class="theme">
+        <div class="t-hd"><span class="t-name">SEO & link hygiene</span><span class="t-count">2 PRs</span></div>
+        <p>Fixing 81 redirect chains flagged by Google Search Console. Notable process detail: #1128 was closed and recreated as #1129 purely so the deploy preview would build from an upstream branch.</p>
+        <div class="t-prs"><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1129" target="_blank" rel="noopener">#1129</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1128" target="_blank" rel="noopener">#1128</a></div>
+      </div>
+      <div class="theme">
+        <div class="t-hd"><span class="t-name">Windows onboarding</span><span class="t-count">2 PRs</span></div>
+        <p>Expanding the Windows Compact setup guide with a prerequisites table, step-by-step verification, and troubleshooting. Community draft #1102 was superseded by the maintainer's #1132.</p>
+        <div class="t-prs"><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1132" target="_blank" rel="noopener">#1132</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1102" target="_blank" rel="noopener">#1102</a></div>
+      </div>
+      <div class="theme">
+        <div class="t-hd"><span class="t-name">Dependency upkeep</span><span class="t-count">8 PRs</span></div>
+        <p>Dependabot and Renovate churn — prettier, eslint, posthog, @types/node, lychee-action. A quarter of all activity by volume; low-risk, mostly auto-mergeable, with one already superseded (#1115 → #1120).</p>
+        <div class="t-prs"><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1120" target="_blank" rel="noopener">#1120</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1119" target="_blank" rel="noopener">#1119</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1116" target="_blank" rel="noopener">#1116</a><a class="prref" href="https://github.com/midnightntwrk/midnight-docs/pull/1114" target="_blank" rel="noopener">#1114</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="insights-sec">
+    <div class="sec-head"><h2>Observations &amp; commentary</h2><span class="count">what the numbers don't say on their own</span></div>
+    <div class="insights">
+      <div class="insight pattern">
+        <span class="i-tag">Maintainer pattern</span>
+        <h3>A "contribution steward" is absorbing community PRs</h3>
+        <p><a href="https://github.com/oduameh" target="_blank" rel="noopener">@oduameh</a> ran the same move at least four times this fortnight: take a community draft, apply every piece of review feedback, complete the frontmatter, credit the original author, and open a clean superseding PR. <b>#1131</b> superseded #980, <b>#1132</b> superseded #1102, <b>#1130</b> superseded #1042, and <b>#1133</b> reworked #1109. It's why closed-unmerged is high but morale-safe — contributors keep their credit and their content ships.</p>
+        <div class="i-meta">supersedes: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1131" target="_blank" rel="noopener">#1131</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1132" target="_blank" rel="noopener">#1132</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1130" target="_blank" rel="noopener">#1130</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1133" target="_blank" rel="noopener">#1133</a></div>
+      </div>
+
+      <div class="insight pattern">
+        <span class="i-tag">Style enforcement</span>
+        <h3>There is an explicit, consistently-applied docs style guide</h3>
+        <p>The same corrections recur in every review: remove em-dashes, kill passive voice, split sentences over ~35 words, standardize "DApp" capitalization, and hold page descriptions to <b>120–160 characters</b>. <a href="https://github.com/midnightntwrk/midnight-docs/pull/1073" target="_blank" rel="noopener">#1073</a> was flagged for a 92-char description; <a href="https://github.com/midnightntwrk/midnight-docs/pull/1126" target="_blank" rel="noopener">#1126</a> got a full "style fixes" block. Reviews are specific and constructive — a strong signal for anyone contributing.</p>
+        <div class="i-meta">observed across: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1126" target="_blank" rel="noopener">#1126</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1073" target="_blank" rel="noopener">#1073</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1080" target="_blank" rel="noopener">#1080</a></div>
+      </div>
+
+      <div class="insight caution">
+        <span class="i-tag">Triage nuance</span>
+        <h3>"Changes requested" doesn't always mean the author is the blocker</h3>
+        <p>The label is a snapshot; the conversation is the truth. On <b>#1126</b> the contributor replied <em>"all suggestions applied"</em> <b>after</b> the review — the ball is actually back with the maintainer for a re-review. On <b>#1073</b> the maintainer posted a fresh round of feedback after the contributor's last reply, so that one genuinely is author-side. The action queue reflects the label; this note reflects the thread.</p>
+        <div class="i-meta">re-review pending: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1126" target="_blank" rel="noopener">#1126</a> · author-side: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1073" target="_blank" rel="noopener">#1073</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1080" target="_blank" rel="noopener">#1080</a></div>
+      </div>
+
+      <div class="insight caution">
+        <span class="i-tag">CI signal</span>
+        <h3>The red CI is mostly a false alarm</h3>
+        <p>GitHub's raw rollup marks <b>9 of 10</b> open PRs "failing" — but seven are the bare <span class="mono">Vercel</span> deployment context, which errors repo-wide regardless of the change. Strip that out and only <b>two</b> PRs have a genuinely failing check: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1119" target="_blank" rel="noopener">#1119</a> (deploy-preview) and <a href="https://github.com/midnightntwrk/midnight-docs/pull/1080" target="_blank" rel="noopener">#1080</a> (deploy-preview + link-check). Reading the raw status would send reviewers chasing ghosts.</p>
+        <div class="i-meta">real failures: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1119" target="_blank" rel="noopener">#1119</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1080" target="_blank" rel="noopener">#1080</a> · noise flagged as <span class="mono">ⓥ</span> in the table</div>
+      </div>
+
+      <div class="insight win">
+        <span class="i-tag">What landed</span>
+        <h3>The merges were content-heavy, not just chores</h3>
+        <p>Beyond the version bumps, real surface area shipped: the <a href="https://github.com/midnightntwrk/midnight-docs/pull/1101" target="_blank" rel="noopener">Tokens category</a> restructured the sidebar and added two tutorials (+1,479/-4), the <a href="https://github.com/midnightntwrk/midnight-docs/pull/1130" target="_blank" rel="noopener">Wallet SDK API reference</a> covers HD keys, Bech32m, DUST, and atomic swaps, and the <a href="https://github.com/midnightntwrk/midnight-docs/pull/1041" target="_blank" rel="noopener">leaderboard example</a> is fully runnable. Merge-to-close ratio ran ~2:1 in favor of merges.</p>
+        <div class="i-meta">headliners: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1101" target="_blank" rel="noopener">#1101</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1130" target="_blank" rel="noopener">#1130</a> <a href="https://github.com/midnightntwrk/midnight-docs/pull/1041" target="_blank" rel="noopener">#1041</a></div>
+      </div>
+
+      <div class="insight">
+        <span class="i-tag">Contributor mix</span>
+        <h3>A broadening base of external contributors</h3>
+        <p>The window drew work from at least ten distinct human authors — a mix of core (<a href="https://github.com/nstanford5" target="_blank" rel="noopener">@nstanford5</a>, <a href="https://github.com/oduameh" target="_blank" rel="noopener">@oduameh</a>, <a href="https://github.com/aaronbassett" target="_blank" rel="noopener">@aaronbassett</a>, @laurenelee) and community (@Olanetsoft, @mzf11125, @pplmaverick, @UtkarshArjariya, @HarleysCodes, @notsoblack, @m2ux, @DpacJones). The steward pattern is what keeps that inflow from turning into review debt.</p>
+        <div class="i-meta">~10 human authors · 2 bots (Dependabot, Renovate)</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="queue-sec">
+    <div class="sec-head"><h2>Action queue</h2><span class="count">open PRs, ranked by what unblocks them</span></div>
+    <div class="queue" id="queue"></div>
+  </section>
+
+  <section id="table-sec">
+    <div class="sec-head"><h2>All active PRs</h2><span class="count" id="table-count"></span></div>
+    <div class="toolbar">
+      <div class="filters" id="filters">
+        <button class="fbtn" data-f="all" aria-pressed="true">All</button>
+        <button class="fbtn" data-f="OPEN" aria-pressed="false">Open</button>
+        <button class="fbtn" data-f="MERGED" aria-pressed="false">Merged</button>
+        <button class="fbtn" data-f="CLOSED" aria-pressed="false">Closed</button>
+        <button class="fbtn" data-f="human" aria-pressed="false">Humans only</button>
+        <button class="fbtn" data-f="bot" aria-pressed="false">Bots only</button>
+      </div>
+      <input class="search" id="search" type="search" placeholder="Filter by title, author, #…" aria-label="Search PRs">
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>PR</th><th>Title</th><th>Author</th><th>State</th><th>Review</th><th>CI</th><th>Size</th><th>Age / Idle</th><th>Disc.</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty-note hidden" id="empty">No PRs match this filter.</div>
+    </div>
+  </section>
+
+  <section id="watch-sec">
+    <div class="sec-head"><h2>Notes &amp; watch-items</h2><span class="count">specific things worth a second look</span></div>
+    <div class="watch">
+      <div class="witem crit">
+        <div class="w-sev"></div>
+        <div class="w-body">
+          <div class="w-title">A merge-ready PR is a month old</div>
+          <div class="w-desc"><a href="https://github.com/midnightntwrk/midnight-docs/pull/1083" target="_blank" rel="noopener">#1083 (Examples coverage matrix)</a> has been approved since Jul 8 and is the oldest open PR at 23 days. It's a large diff (+1,061/-72 across 6 files) that grows more merge-conflict-prone the longer it waits. This is the single clearest "just merge it" item.</div>
+        </div>
+      </div>
+      <div class="witem crit">
+        <div class="w-sev"></div>
+        <div class="w-body">
+          <div class="w-title">#1073 is blocked by an unsigned CLA, not just review</div>
+          <div class="w-desc">Its <span class="mono">license/cla</span> check is still <b>PENDING</b> — the CLA assistant shows it unsigned. Even once <a href="https://github.com/midnightntwrk/midnight-docs/pull/1073" target="_blank" rel="noopener">#1073</a>'s review feedback is addressed, it cannot merge until <a href="https://github.com/HarleysCodes" target="_blank" rel="noopener">@HarleysCodes</a> signs. Worth flagging to the contributor now so it isn't discovered at merge time.</div>
+        </div>
+      </div>
+      <div class="witem warn">
+        <div class="w-sev"></div>
+        <div class="w-body">
+          <div class="w-title">Three overlapping browser-dApp tutorials need a canonical pick</div>
+          <div class="w-desc"><a href="https://github.com/midnightntwrk/midnight-docs/pull/1133" target="_blank" rel="noopener">#1133</a> (maintainer rework), <a href="https://github.com/midnightntwrk/midnight-docs/pull/1126" target="_blank" rel="noopener">#1126</a> (levelPrivateStateProvider variant), and the now-closed <a href="https://github.com/midnightntwrk/midnight-docs/pull/1109" target="_blank" rel="noopener">#1109</a> all cover "call a contract from a browser dApp." Decide which is the canonical guide before two near-duplicate tutorials land and confuse readers.</div>
+        </div>
+      </div>
+      <div class="witem warn">
+        <div class="w-sev"></div>
+        <div class="w-body">
+          <div class="w-title">#1126 is waiting on the maintainer, not the contributor</div>
+          <div class="w-desc">The <span class="chip warn" style="padding:1px 6px">changes requested</span> label is stale: <a href="https://github.com/pplmaverick" target="_blank" rel="noopener">@pplmaverick</a> replied "all suggestions applied" after the review. A quick re-review on <a href="https://github.com/midnightntwrk/midnight-docs/pull/1126" target="_blank" rel="noopener">#1126</a> either merges it or reopens the thread — right now it's silently stalled.</div>
+        </div>
+      </div>
+      <div class="witem info">
+        <div class="w-sev"></div>
+        <div class="w-body">
+          <div class="w-title">deploy-preview is unreliable for branch/fork PRs</div>
+          <div class="w-desc">Several PRs merged <em>with</em> a red <span class="mono">deploy-preview</span> (<a href="https://github.com/midnightntwrk/midnight-docs/pull/1129" target="_blank" rel="noopener">#1129</a>, <a href="https://github.com/midnightntwrk/midnight-docs/pull/1041" target="_blank" rel="noopener">#1041</a>), and <a href="https://github.com/midnightntwrk/midnight-docs/pull/1128" target="_blank" rel="noopener">#1128</a> was closed and recreated as #1129 specifically so the preview would build. If preview builds can't run on these branches, the failing check is adding noise rather than signal — worth a CI config look.</div>
+        </div>
+      </div>
+      <div class="witem info">
+        <div class="w-sev"></div>
+        <div class="w-body">
+          <div class="w-title">The dependency queue is mergeable but accumulating</div>
+          <div class="w-desc">Three bot PRs sit open: <a href="https://github.com/midnightntwrk/midnight-docs/pull/1116" target="_blank" rel="noopener">#1116</a> (Renovate, +243/-199), <a href="https://github.com/midnightntwrk/midnight-docs/pull/1114" target="_blank" rel="noopener">#1114</a> (eslint, idle 8 days), and <a href="https://github.com/midnightntwrk/midnight-docs/pull/1119" target="_blank" rel="noopener">#1119</a> (postcss — the one with a genuine deploy-preview failure). The maintainer already batch-merged five bot PRs on Jul 16; these three are the tail.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span id="foot-left"></span>
+    <span>Generated by Claude Code · data via GitHub API</span>
+  </footer>
+</div>
+
+<script type="application/json" id="data">[{"number":1133,"title":"docs(tutorials): add browser DApp with injected wallet tutorial","url":"https://github.com/midnightntwrk/midnight-docs/pull/1133","state":"OPEN","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-07-15T14:19:03Z","updatedAt":"2026-07-16T09:49:00Z","closedAt":null,"mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":246,"deletions":0,"changedFiles":3,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":1,"totalComments":4,"reviews":[],"ageDays":0,"idleDays":0,"blockedOn":"maintainer","priority":3,"action":"Needs a maintainer review"},{"number":1132,"title":"Expand Windows Compact setup guide (supersedes #1102)","url":"https://github.com/midnightntwrk/midnight-docs/pull/1132","state":"OPEN","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-07-15T14:18:33Z","updatedAt":"2026-07-16T11:22:31Z","closedAt":null,"mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":272,"deletions":68,"changedFiles":1,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":0,"idleDays":0,"blockedOn":"maintainer","priority":3,"action":"Needs a maintainer review"},{"number":1131,"title":"docs: document non-ledger transactions and classification","url":"https://github.com/midnightntwrk/midnight-docs/pull/1131","state":"OPEN","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-07-15T14:11:40Z","updatedAt":"2026-07-16T09:02:23Z","closedAt":null,"mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":77,"deletions":3,"changedFiles":2,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":0,"idleDays":0,"blockedOn":"maintainer","priority":3,"action":"Needs a maintainer review"},{"number":1130,"title":"docs: add Wallet SDK API reference and Kapa MCP server listing","url":"https://github.com/midnightntwrk/midnight-docs/pull/1130","state":"MERGED","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-07-15T14:00:51Z","updatedAt":"2026-07-16T09:41:02Z","closedAt":"2026-07-16T09:41:00Z","mergedAt":"2026-07-16T09:41:00Z","reviewDecision":"REVIEW_REQUIRED","additions":391,"deletions":0,"changedFiles":3,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":0,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1129,"title":"Fix redirect chains that end on removed or renamed pages","url":"https://github.com/midnightntwrk/midnight-docs/pull/1129","state":"MERGED","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-07-15T13:00:16Z","updatedAt":"2026-07-15T13:47:49Z","closedAt":"2026-07-15T13:47:47Z","mergedAt":"2026-07-15T13:47:47Z","reviewDecision":"REVIEW_REQUIRED","additions":277,"deletions":47,"changedFiles":1,"labels":[],"ciStatus":"failing","vercelFail":true,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"}],"humanComments":0,"totalComments":1,"reviews":[],"ageDays":0,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1128,"title":"Fix redirect chains that end on removed or renamed pages","url":"https://github.com/midnightntwrk/midnight-docs/pull/1128","state":"CLOSED","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-07-15T11:42:46Z","updatedAt":"2026-07-15T13:00:08Z","closedAt":"2026-07-15T13:00:08Z","mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":277,"deletions":47,"changedFiles":1,"labels":[],"ciStatus":"failing","vercelFail":true,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"}],"humanComments":1,"totalComments":2,"reviews":[],"ageDays":1,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1127,"title":"Revise MCP client setup instructions","url":"https://github.com/midnightntwrk/midnight-docs/pull/1127","state":"MERGED","isDraft":false,"baseRefName":"main","author":"aaronbassett","authorType":"human","createdAt":"2026-07-13T16:53:07Z","updatedAt":"2026-07-15T21:45:01Z","closedAt":"2026-07-13T17:18:05Z","mergedAt":"2026-07-13T17:18:05Z","reviewDecision":"APPROVED","additions":2,"deletions":2,"changedFiles":1,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[{"who":"JAlbertCode","state":"DISMISSED","at":"2026-07-13"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-13"},{"who":"JAlbertCode","state":"APPROVED","at":"2026-07-13"}],"ageDays":2,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1126,"title":"docs: add browser dApp guide for levelPrivateStateProvider with canary password verification","url":"https://github.com/midnightntwrk/midnight-docs/pull/1126","state":"OPEN","isDraft":false,"baseRefName":"main","author":"pplmaverick","authorType":"human","createdAt":"2026-07-10T05:25:20Z","updatedAt":"2026-07-15T14:17:18Z","closedAt":null,"mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":52,"deletions":1,"changedFiles":1,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":1,"totalComments":2,"reviews":[{"who":"oduameh","state":"CHANGES_REQUESTED","at":"2026-07-15"}],"ageDays":6,"idleDays":0,"blockedOn":"author","priority":4,"action":"Author to address review feedback"},{"number":1125,"title":"chore(deps): bump lycheeverse/lychee-action from 2.6.1 to 2.9.0","url":"https://github.com/midnightntwrk/midnight-docs/pull/1125","state":"MERGED","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-09T22:53:39Z","updatedAt":"2026-07-15T21:44:48Z","closedAt":"2026-07-14T12:07:41Z","mergedAt":"2026-07-14T12:07:41Z","reviewDecision":"APPROVED","additions":1,"deletions":1,"changedFiles":1,"labels":["dependencies","github_actions"],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":2,"reviews":[{"who":"oduameh","state":"APPROVED","at":"2026-07-14"},{"who":"oduameh","state":"APPROVED","at":"2026-07-14"}],"ageDays":6,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1124,"title":"chore: bump wallet-sdk version","url":"https://github.com/midnightntwrk/midnight-docs/pull/1124","state":"MERGED","isDraft":false,"baseRefName":"main","author":"nstanford5","authorType":"human","createdAt":"2026-07-09T00:20:31Z","updatedAt":"2026-07-09T00:29:25Z","closedAt":"2026-07-09T00:23:28Z","mergedAt":"2026-07-09T00:23:28Z","reviewDecision":"REVIEW_REQUIRED","additions":6,"deletions":6,"changedFiles":2,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":7,"idleDays":7,"blockedOn":"\u2014","priority":99,"action":""},{"number":1123,"title":"chore: battle-versions","url":"https://github.com/midnightntwrk/midnight-docs/pull/1123","state":"MERGED","isDraft":false,"baseRefName":"main","author":"nstanford5","authorType":"human","createdAt":"2026-07-08T23:07:45Z","updatedAt":"2026-07-09T00:13:15Z","closedAt":"2026-07-09T00:13:14Z","mergedAt":"2026-07-09T00:13:14Z","reviewDecision":"REVIEW_REQUIRED","additions":37,"deletions":33,"changedFiles":1,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":7,"idleDays":7,"blockedOn":"\u2014","priority":99,"action":""},{"number":1122,"title":"docs: update leaderboard tutorial","url":"https://github.com/midnightntwrk/midnight-docs/pull/1122","state":"MERGED","isDraft":false,"baseRefName":"main","author":"laurenelee","authorType":"human","createdAt":"2026-07-07T23:32:07Z","updatedAt":"2026-07-08T03:17:26Z","closedAt":"2026-07-08T03:17:25Z","mergedAt":"2026-07-08T03:17:25Z","reviewDecision":"APPROVED","additions":27,"deletions":43,"changedFiles":4,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[{"who":"nstanford5","state":"APPROVED","at":"2026-07-08"}],"ageDays":8,"idleDays":8,"blockedOn":"\u2014","priority":99,"action":""},{"number":1121,"title":"chore: update tutorial to latest code","url":"https://github.com/midnightntwrk/midnight-docs/pull/1121","state":"MERGED","isDraft":false,"baseRefName":"main","author":"nstanford5","authorType":"human","createdAt":"2026-07-07T14:13:53Z","updatedAt":"2026-07-07T14:22:00Z","closedAt":"2026-07-07T14:19:01Z","mergedAt":"2026-07-07T14:19:01Z","reviewDecision":"REVIEW_REQUIRED","additions":85,"deletions":43,"changedFiles":3,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":8,"idleDays":8,"blockedOn":"\u2014","priority":99,"action":""},{"number":1120,"title":"chore(deps-dev): bump prettier from 3.8.4 to 3.9.3","url":"https://github.com/midnightntwrk/midnight-docs/pull/1120","state":"MERGED","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-06T22:55:24Z","updatedAt":"2026-07-16T11:47:30Z","closedAt":"2026-07-16T11:42:12Z","mergedAt":"2026-07-16T11:42:11Z","reviewDecision":"APPROVED","additions":6,"deletions":6,"changedFiles":2,"labels":["dependencies","javascript"],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":2,"reviews":[{"who":"oduameh","state":"APPROVED","at":"2026-07-14"},{"who":"oduameh","state":"APPROVED","at":"2026-07-16"}],"ageDays":9,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1119,"title":"chore(deps-dev): bump postcss from 8.5.15 to 8.5.16","url":"https://github.com/midnightntwrk/midnight-docs/pull/1119","state":"OPEN","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-06T22:55:07Z","updatedAt":"2026-07-16T12:00:42Z","closedAt":null,"mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":13,"deletions":2,"changedFiles":2,"labels":["dependencies","javascript"],"ciStatus":"failing","vercelFail":true,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"}],"humanComments":0,"totalComments":1,"reviews":[{"who":"oduameh","state":"DISMISSED","at":"2026-07-16"}],"ageDays":9,"idleDays":0,"blockedOn":"author (CI)","priority":2,"action":"Fix failing CI checks"},{"number":1118,"title":"chore(deps): bump posthog-js from 1.395.0 to 1.396.2","url":"https://github.com/midnightntwrk/midnight-docs/pull/1118","state":"MERGED","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-06T22:54:52Z","updatedAt":"2026-07-16T11:49:38Z","closedAt":"2026-07-16T11:44:57Z","mergedAt":"2026-07-16T11:44:57Z","reviewDecision":"APPROVED","additions":17,"deletions":17,"changedFiles":2,"labels":["dependencies","javascript"],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":2,"reviews":[{"who":"oduameh","state":"APPROVED","at":"2026-07-16"}],"ageDays":9,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1117,"title":"fix: version fix","url":"https://github.com/midnightntwrk/midnight-docs/pull/1117","state":"MERGED","isDraft":false,"baseRefName":"main","author":"nstanford5","authorType":"human","createdAt":"2026-07-06T17:14:17Z","updatedAt":"2026-07-06T17:19:51Z","closedAt":"2026-07-06T17:15:41Z","mergedAt":"2026-07-06T17:15:41Z","reviewDecision":"REVIEW_REQUIRED","additions":1,"deletions":1,"changedFiles":1,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":9,"idleDays":9,"blockedOn":"\u2014","priority":99,"action":""},{"number":1116,"title":"fix(deps): update non-major dependencies","url":"https://github.com/midnightntwrk/midnight-docs/pull/1116","state":"OPEN","isDraft":false,"baseRefName":"main","author":"app/renovate","authorType":"bot","createdAt":"2026-07-06T01:05:56Z","updatedAt":"2026-07-16T12:01:36Z","closedAt":null,"mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":243,"deletions":199,"changedFiles":3,"labels":["renovate"],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":2,"reviews":[{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-11"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-11"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-12"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-12"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-13"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-13"},{"who":"jina-simulation","state":"COMMENTED","at":"2026-07-13"}],"ageDays":10,"idleDays":0,"blockedOn":"maintainer","priority":5,"action":"Dependency bump \u2014 review & merge"},{"number":1115,"title":"chore(deps-dev): bump prettier from 3.8.4 to 3.8.5","url":"https://github.com/midnightntwrk/midnight-docs/pull/1115","state":"CLOSED","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-03T22:54:24Z","updatedAt":"2026-07-06T22:55:29Z","closedAt":"2026-07-06T22:55:27Z","mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":6,"deletions":6,"changedFiles":2,"labels":["dependencies","javascript"],"ciStatus":"failing","vercelFail":false,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"}],"humanComments":1,"totalComments":2,"reviews":[],"ageDays":12,"idleDays":9,"blockedOn":"\u2014","priority":99,"action":""},{"number":1114,"title":"chore(deps): bump eslint from 10.5.0 to 10.6.0","url":"https://github.com/midnightntwrk/midnight-docs/pull/1114","state":"OPEN","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-03T22:54:03Z","updatedAt":"2026-07-08T03:24:58Z","closedAt":null,"mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":6,"deletions":6,"changedFiles":2,"labels":["dependencies","javascript"],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":2,"reviews":[],"ageDays":12,"idleDays":8,"blockedOn":"maintainer","priority":5,"action":"Dependency bump \u2014 review & merge"},{"number":1113,"title":"chore(deps-dev): bump @types/node from 25.9.4 to 26.0.1","url":"https://github.com/midnightntwrk/midnight-docs/pull/1113","state":"MERGED","isDraft":false,"baseRefName":"main","author":"app/dependabot","authorType":"bot","createdAt":"2026-07-01T22:56:56Z","updatedAt":"2026-07-16T11:57:02Z","closedAt":"2026-07-16T11:54:43Z","mergedAt":"2026-07-16T11:54:43Z","reviewDecision":"APPROVED","additions":14,"deletions":14,"changedFiles":2,"labels":["dependencies","javascript"],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":2,"reviews":[{"who":"oduameh","state":"APPROVED","at":"2026-07-16"}],"ageDays":14,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1112,"title":"[DO NOT MERGE]Compact toolchain docs copied to midnight-docs","url":"https://github.com/midnightntwrk/midnight-docs/pull/1112","state":"CLOSED","isDraft":true,"baseRefName":"main","author":"chrisferry","authorType":"human","createdAt":"2026-07-01T04:13:50Z","updatedAt":"2026-07-15T13:54:27Z","closedAt":"2026-07-15T13:26:34Z","mergedAt":null,"reviewDecision":"REVIEW_REQUIRED","additions":2682,"deletions":333,"changedFiles":242,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":2,"totalComments":5,"reviews":[],"ageDays":15,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1109,"title":"docs(tutorials): add \"Browser dApp with an injected wallet\" tutorial","url":"https://github.com/midnightntwrk/midnight-docs/pull/1109","state":"CLOSED","isDraft":false,"baseRefName":"main","author":"DpacJones","authorType":"human","createdAt":"2026-06-26T06:37:25Z","updatedAt":"2026-07-15T14:19:22Z","closedAt":"2026-07-15T14:19:22Z","mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":246,"deletions":0,"changedFiles":3,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":3,"totalComments":4,"reviews":[{"who":"oduameh","state":"CHANGES_REQUESTED","at":"2026-06-29"}],"ageDays":20,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1107,"title":"chore: preprod version bump","url":"https://github.com/midnightntwrk/midnight-docs/pull/1107","state":"MERGED","isDraft":false,"baseRefName":"main","author":"nstanford5","authorType":"human","createdAt":"2026-06-26T03:10:38Z","updatedAt":"2026-07-08T14:42:38Z","closedAt":"2026-07-08T14:39:58Z","mergedAt":"2026-07-08T14:39:58Z","reviewDecision":"REVIEW_REQUIRED","additions":9,"deletions":9,"changedFiles":2,"labels":[],"ciStatus":"passing","vercelFail":false,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[],"ageDays":20,"idleDays":7,"blockedOn":"\u2014","priority":99,"action":""},{"number":1102,"title":"docs(guides): expand Windows setup with verification, troubleshooting, and quick-reference","url":"https://github.com/midnightntwrk/midnight-docs/pull/1102","state":"CLOSED","isDraft":false,"baseRefName":"main","author":"notsoblack","authorType":"human","createdAt":"2026-06-25T17:24:33Z","updatedAt":"2026-07-15T14:18:45Z","closedAt":"2026-07-15T14:18:45Z","mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":236,"deletions":10,"changedFiles":1,"labels":[],"ciStatus":"mixed","vercelFail":true,"failingChecks":[{"name":"license/cla","c":"PENDING"}],"humanComments":3,"totalComments":4,"reviews":[{"who":"oduameh","state":"CHANGES_REQUESTED","at":"2026-06-29"},{"who":"oduameh","state":"CHANGES_REQUESTED","at":"2026-06-29"}],"ageDays":20,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1101,"title":"docs(tokens): top-level Tokens category with shielded/unshielded token tutorials","url":"https://github.com/midnightntwrk/midnight-docs/pull/1101","state":"MERGED","isDraft":false,"baseRefName":"main","author":"Olanetsoft","authorType":"human","createdAt":"2026-06-25T16:18:02Z","updatedAt":"2026-07-15T21:44:52Z","closedAt":"2026-07-15T01:21:58Z","mergedAt":"2026-07-15T01:21:58Z","reviewDecision":"APPROVED","additions":1479,"deletions":4,"changedFiles":4,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":1,"totalComments":4,"reviews":[{"who":"oduameh","state":"COMMENTED","at":"2026-06-27"},{"who":"oduameh","state":"COMMENTED","at":"2026-06-27"},{"who":"oduameh","state":"COMMENTED","at":"2026-06-27"},{"who":"oduameh","state":"COMMENTED","at":"2026-06-27"},{"who":"Olanetsoft","state":"COMMENTED","at":"2026-06-30"},{"who":"Olanetsoft","state":"COMMENTED","at":"2026-06-30"},{"who":"oduameh","state":"DISMISSED","at":"2026-06-30"},{"who":"nstanford5","state":"CHANGES_REQUESTED","at":"2026-07-08"},{"who":"Olanetsoft","state":"COMMENTED","at":"2026-07-14"},{"who":"Olanetsoft","state":"COMMENTED","at":"2026-07-14"},{"who":"nstanford5","state":"APPROVED","at":"2026-07-15"}],"ageDays":20,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1083,"title":"Examples coverage matrix","url":"https://github.com/midnightntwrk/midnight-docs/pull/1083","state":"OPEN","isDraft":false,"baseRefName":"main","author":"oduameh","authorType":"human","createdAt":"2026-06-22T13:50:57Z","updatedAt":"2026-07-15T21:44:33Z","closedAt":null,"mergedAt":null,"reviewDecision":"APPROVED","additions":1061,"deletions":72,"changedFiles":6,"labels":[],"ciStatus":"passing","vercelFail":true,"failingChecks":[],"humanComments":0,"totalComments":3,"reviews":[{"who":"nstanford5","state":"APPROVED","at":"2026-07-08"}],"ageDays":23,"idleDays":0,"blockedOn":"maintainer","priority":1,"action":"Approved \u2014 ready to merge"},{"number":1080,"title":"docs: fix wallet discovery using fixed window.midnight.mnLace key","url":"https://github.com/midnightntwrk/midnight-docs/pull/1080","state":"OPEN","isDraft":false,"baseRefName":"main","author":"UtkarshArjariya","authorType":"human","createdAt":"2026-06-22T08:58:08Z","updatedAt":"2026-07-15T13:41:55Z","closedAt":null,"mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":25,"deletions":11,"changedFiles":3,"labels":[],"ciStatus":"failing","vercelFail":true,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"},{"name":"link-check","c":"FAILURE"}],"humanComments":1,"totalComments":2,"reviews":[{"who":"oduameh","state":"CHANGES_REQUESTED","at":"2026-07-15"}],"ageDays":24,"idleDays":0,"blockedOn":"author (CI)","priority":2,"action":"Fix failing CI checks"},{"number":1073,"title":"docs(troubleshoot): document GitHub Package Registry auth for @midnight-ntwrk/* (closes #787)","url":"https://github.com/midnightntwrk/midnight-docs/pull/1073","state":"OPEN","isDraft":false,"baseRefName":"main","author":"HarleysCodes","authorType":"human","createdAt":"2026-06-19T21:48:35Z","updatedAt":"2026-07-15T13:44:20Z","closedAt":null,"mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":65,"deletions":1,"changedFiles":1,"labels":[],"ciStatus":"mixed","vercelFail":true,"failingChecks":[{"name":"license/cla","c":"PENDING"}],"humanComments":2,"totalComments":3,"reviews":[{"who":"oduameh","state":"COMMENTED","at":"2026-06-22"},{"who":"oduameh","state":"CHANGES_REQUESTED","at":"2026-07-15"}],"ageDays":26,"idleDays":0,"blockedOn":"author","priority":4,"action":"Author to address review feedback"},{"number":1042,"title":"feat: add Wallet SDK API reference page","url":"https://github.com/midnightntwrk/midnight-docs/pull/1042","state":"CLOSED","isDraft":false,"baseRefName":"main","author":"mzf11125","authorType":"human","createdAt":"2026-06-12T15:46:39Z","updatedAt":"2026-07-15T14:01:06Z","closedAt":"2026-07-15T14:01:06Z","mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":429,"deletions":0,"changedFiles":3,"labels":[],"ciStatus":"failing","vercelFail":true,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"},{"name":"link-check","c":"FAILURE"}],"humanComments":2,"totalComments":3,"reviews":[{"who":"nstanford5","state":"CHANGES_REQUESTED","at":"2026-07-08"}],"ageDays":33,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":1041,"title":"docs: add leaderboard runnable example (closes #1039)","url":"https://github.com/midnightntwrk/midnight-docs/pull/1041","state":"MERGED","isDraft":false,"baseRefName":"main","author":"mzf11125","authorType":"human","createdAt":"2026-06-12T15:25:41Z","updatedAt":"2026-07-15T13:57:47Z","closedAt":"2026-07-15T13:57:47Z","mergedAt":"2026-07-15T13:57:47Z","reviewDecision":"APPROVED","additions":302,"deletions":0,"changedFiles":1,"labels":[],"ciStatus":"failing","vercelFail":true,"failingChecks":[{"name":"deploy-preview","c":"FAILURE"},{"name":"link-check","c":"FAILURE"}],"humanComments":1,"totalComments":2,"reviews":[{"who":"nstanford5","state":"CHANGES_REQUESTED","at":"2026-06-15"},{"who":"mzf11125","state":"COMMENTED","at":"2026-06-15"},{"who":"nstanford5","state":"CHANGES_REQUESTED","at":"2026-06-16"},{"who":"nstanford5","state":"DISMISSED","at":"2026-06-17"},{"who":"oduameh","state":"COMMENTED","at":"2026-06-22"},{"who":"oduameh","state":"APPROVED","at":"2026-07-15"}],"ageDays":33,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""},{"number":980,"title":"docs: document non-ledger transactions and classification","url":"https://github.com/midnightntwrk/midnight-docs/pull/980","state":"CLOSED","isDraft":true,"baseRefName":"main","author":"m2ux","authorType":"human","createdAt":"2026-06-01T17:08:27Z","updatedAt":"2026-07-15T14:11:52Z","closedAt":"2026-07-15T14:11:52Z","mergedAt":null,"reviewDecision":"CHANGES_REQUESTED","additions":77,"deletions":2,"changedFiles":2,"labels":[],"ciStatus":"failing","vercelFail":false,"failingChecks":[{"name":"run-LHCI-workflow / generate_lighthouse_audit","c":"FAILURE"}],"humanComments":2,"totalComments":5,"reviews":[{"who":"nstanford5","state":"CHANGES_REQUESTED","at":"2026-06-02"}],"ageDays":44,"idleDays":0,"blockedOn":"\u2014","priority":99,"action":""}]</script>
+<script>
+(function () {
+  "use strict";
+  const PRS = JSON.parse(document.getElementById("data").textContent);
+  const WINDOW_START = "2026-07-02", GEN_DATE = "2026-07-16";
+  const $ = (s, r) => (r || document).querySelector(s);
+  const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+  const esc = s => String(s).replace(/[&<>"]/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m]));
+
+  const by = st => PRS.filter(p => p.state === st);
+  const open = by("OPEN"), merged = by("MERGED"), closed = by("CLOSED");
+  const openHuman = open.filter(p => p.authorType === "human");
+  const botsOpen = open.filter(p => p.authorType === "bot");
+
+  // ---- header ----
+  $("#subtitle").textContent =
+    `Status of every pull request on midnightntwrk/midnight-docs with activity in the last two weeks — ${PRS.length} PRs, triaged by what each one is waiting on.`;
+  $("#metablock").innerHTML =
+    `<div>Repo <strong>midnightntwrk/midnight-docs</strong></div>
+     <div>Window <strong>${WINDOW_START} → ${GEN_DATE}</strong></div>
+     <div>Generated <strong>${GEN_DATE}</strong></div>
+     <button class="theme-toggle" id="themeBtn">◐ Toggle theme</button>`;
+  $("#kpi-window").textContent = `activity window: ${WINDOW_START} → ${GEN_DATE}`;
+  $("#open-n").textContent = open.length;
+  $("#d-total").textContent = PRS.length;
+  $("#foot-left").textContent = `${PRS.length} PRs · ${open.length} open · ${merged.length} merged · ${closed.length} closed`;
+
+  // ---- KPI tiles ----
+  const mergeRate = Math.round(merged.length / (merged.length + closed.length) * 100);
+  const kpis = [
+    { label: "Open", num: open.length, stripe: "var(--good)",
+      sub: `<b>${openHuman.length}</b> human · <b>${botsOpen.length}</b> bot` },
+    { label: "Merged", num: merged.length, stripe: "var(--accent)",
+      sub: `${mergeRate}% of resolved PRs landed` },
+    { label: "Closed unmerged", num: closed.length, stripe: "var(--ink-3)",
+      sub: `mostly superseded / duplicates` },
+    { label: "Needs a maintainer", num: open.filter(p => p.blockedOn.indexOf("maintainer") === 0).length, stripe: "var(--warning)",
+      sub: `review, merge or triage` },
+  ];
+  const kwrap = $("#kpis");
+  kpis.forEach(k => {
+    const t = el("div", "tile");
+    t.innerHTML = `<span class="stripe" style="background:${k.stripe}"></span>
+      <div class="k-label">${k.label}</div>
+      <div class="k-num">${k.num}</div>
+      <div class="k-sub">${k.sub}</div>`;
+    kwrap.appendChild(t);
+  });
+
+  // ---- triage meters ----
+  $("#triage-count").textContent = `${open.length} open`;
+  const meters = [
+    { n: open.filter(p => p.reviewDecision === "APPROVED").length, label: "Approved · ready to merge", color: "var(--good)" },
+    { n: open.filter(p => p.reviewDecision === "REVIEW_REQUIRED").length, label: "Awaiting first review", color: "var(--accent)" },
+    { n: open.filter(p => p.reviewDecision === "CHANGES_REQUESTED").length, label: "Changes requested", color: "var(--warning)" },
+    { n: open.filter(p => p.failingChecks.some(c => c.c === "FAILURE" || c.c === "ERROR")).length, label: "CI blocked (real checks)", color: "var(--critical)" },
+  ];
+  const mwrap = $("#meters");
+  meters.forEach(m => {
+    const d = el("div", "meter");
+    d.innerHTML = `<span class="dot" style="background:${m.color}"></span>
+      <div><div class="m-num">${m.n}</div><div class="m-label">${m.label}</div></div>`;
+    mwrap.appendChild(d);
+  });
+
+  // ---- distribution bar ----
+  const dist = [
+    { label: "Merged", n: merged.length, color: "var(--accent)" },
+    { label: "Open", n: open.length, color: "var(--good)" },
+    { label: "Closed", n: closed.length, color: "var(--ink-3)" },
+  ];
+  const total = PRS.length;
+  const bar = $("#distro-bar"), leg = $("#distro-legend");
+  dist.forEach(d => {
+    const seg = el("div", "seg");
+    seg.style.flex = d.n; seg.style.background = d.color;
+    seg.textContent = d.n;
+    seg.title = `${d.label}: ${d.n}`;
+    bar.appendChild(seg);
+    const s = el("span"); s.innerHTML = `<i style="background:${d.color}"></i>${d.label} — <b class="mono">${d.n}</b> (${Math.round(d.n / total * 100)}%)`;
+    leg.appendChild(s);
+  });
+
+  // ---- action queue ----
+  const pClass = p => {
+    if (p.action.indexOf("ready to merge") >= 0) return "p-merge";
+    if (p.blockedOn.indexOf("CI") >= 0) return "p-ci";
+    if (p.reviewDecision === "CHANGES_REQUESTED") return "p-author";
+    if (p.authorType === "bot") return "p-bot";
+    return "p-review";
+  };
+  const reviewChip = p => {
+    const map = {
+      APPROVED: ["good", "approved"], CHANGES_REQUESTED: ["warn", "changes requested"],
+      REVIEW_REQUIRED: ["accent", "review required"], NONE: ["", "no review"]
+    };
+    const [cls, txt] = map[p.reviewDecision] || ["", p.reviewDecision.toLowerCase()];
+    return `<span class="chip ${cls}">${txt}</span>`;
+  };
+  const ciChip = p => {
+    const real = p.failingChecks.filter(c => c.c === "FAILURE" || c.c === "ERROR");
+    const pend = p.failingChecks.filter(c => c.c === "PENDING");
+    if (real.length) return `<span class="chip crit"><span class="cdot" style="background:var(--critical)"></span>CI: ${esc(real.map(c => c.name).join(", "))}</span>`;
+    if (pend.length) return `<span class="chip warn"><span class="cdot" style="background:var(--warning)"></span>CI pending: ${esc(pend.map(c => c.name).join(", "))}</span>`;
+    if (p.ciStatus === "passing") return `<span class="chip good"><span class="cdot" style="background:var(--good)"></span>CI green</span>`;
+    return `<span class="chip"><span class="cdot" style="background:var(--ink-3)"></span>CI ${esc(p.ciStatus)}</span>`;
+  };
+  const q = $("#queue");
+  open.slice().sort((a, b) => a.priority - b.priority).forEach(p => {
+    const c = el("div", "qcard " + pClass(p));
+    c.innerHTML = `
+      <div class="q-top">
+        <span class="q-num"><a href="${p.url}" target="_blank" rel="noopener">#${p.number}</a></span>
+        <span class="q-action">${esc(p.action)}</span>
+      </div>
+      <div class="q-title"><a href="${p.url}" target="_blank" rel="noopener">${esc(p.title)}</a></div>
+      <div class="q-foot">
+        <span class="chip">${p.authorType === "bot" ? "🤖 " : ""}${esc(p.author)}</span>
+        ${reviewChip(p)} ${ciChip(p)}
+        <span class="chip">blocked on: ${esc(p.blockedOn)}</span>
+        <span class="chip">age ${p.ageDays}d · idle ${p.idleDays}d</span>
+      </div>`;
+    q.appendChild(c);
+  });
+
+  // ---- table ----
+  const tbody = $("#tbody");
+  const revShort = { APPROVED: ["good", "approved"], CHANGES_REQUESTED: ["warn", "changes req."], REVIEW_REQUIRED: ["accent", "review req."], NONE: ["", "—"] };
+  const rows = PRS.slice().sort((a, b) => b.number - a.number).map(p => {
+    const tr = el("tr");
+    tr.dataset.state = p.state; tr.dataset.author = p.authorType;
+    tr.dataset.text = (p.number + " " + p.title + " " + p.author).toLowerCase();
+    const [rc, rt] = revShort[p.reviewDecision] || ["", "—"];
+    const real = p.failingChecks.filter(c => c.c === "FAILURE" || c.c === "ERROR");
+    const pend = p.failingChecks.filter(c => c.c === "PENDING");
+    let ci;
+    if (real.length) ci = `<span class="chip crit" title="${esc(real.map(c => c.name).join(', '))}"><span class="cdot" style="background:var(--critical)"></span>fail</span>`;
+    else if (pend.length) ci = `<span class="chip warn"><span class="cdot" style="background:var(--warning)"></span>pending</span>`;
+    else if (p.ciStatus === "passing") ci = `<span class="chip good"><span class="cdot" style="background:var(--good)"></span>green</span>`;
+    else ci = `<span class="chip">—</span>`;
+    const vNote = p.state === "OPEN" && p.vercelFail ? ` <span title="Vercel deploy check failing repo-wide (noise)" style="color:var(--ink-3)">ⓥ</span>` : "";
+    tr.innerHTML = `
+      <td class="c-num"><a href="${p.url}" target="_blank" rel="noopener">#${p.number}</a></td>
+      <td class="c-title"><div class="t-main">${esc(p.title)}</div><div class="t-sub">${esc(p.baseRefName)} · ${p.changedFiles} file${p.changedFiles === 1 ? "" : "s"}</div></td>
+      <td class="c-author">${esc(p.author)}${p.authorType === "bot" ? ' <span class="bot">bot</span>' : ""}</td>
+      <td><span class="state-pill s-${p.state}"><span class="sq"></span>${p.state.toLowerCase()}${p.isDraft ? " · draft" : ""}</span></td>
+      <td>${p.state === "OPEN" ? `<span class="chip ${rc}">${rt}</span>` : `<span style="color:var(--ink-3);font-size:12px">—</span>`}</td>
+      <td>${p.state === "OPEN" ? ci + vNote : `<span style="color:var(--ink-3);font-size:12px">—</span>`}</td>
+      <td class="num"><span class="diff-add">+${p.additions}</span> <span class="diff-del">−${p.deletions}</span></td>
+      <td class="num">${p.ageDays}d / ${p.idleDays}d</td>
+      <td class="num">${p.humanComments}💬 ${p.reviews.length}✓</td>`;
+    tbody.appendChild(tr);
+    return tr;
+  });
+
+  // ---- filtering ----
+  let stateFilter = "all", search = "";
+  const applies = tr => {
+    let ok = true;
+    if (stateFilter === "human" || stateFilter === "bot") ok = tr.dataset.author === stateFilter;
+    else if (stateFilter !== "all") ok = tr.dataset.state === stateFilter;
+    if (ok && search) ok = tr.dataset.text.indexOf(search) >= 0;
+    return ok;
+  };
+  const refresh = () => {
+    let shown = 0;
+    rows.forEach(tr => { const v = applies(tr); tr.classList.toggle("hidden", !v); if (v) shown++; });
+    $("#empty").classList.toggle("hidden", shown > 0);
+    $("#table-count").textContent = `${shown} of ${PRS.length} shown`;
+  };
+  $("#filters").addEventListener("click", e => {
+    const b = e.target.closest(".fbtn"); if (!b) return;
+    [...$("#filters").children].forEach(x => x.setAttribute("aria-pressed", x === b));
+    stateFilter = b.dataset.f; refresh();
+  });
+  $("#search").addEventListener("input", e => { search = e.target.value.trim().toLowerCase(); refresh(); });
+  refresh();
+
+  // ---- theme toggle ----
+  $("#themeBtn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    const next = cur === "dark" ? "light" : cur === "light" ? "dark"
+      : (matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", next);
+  });
+})();
+</script>
