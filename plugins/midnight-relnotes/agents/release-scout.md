@@ -24,7 +24,11 @@ the absolute `DOCS_REPO` path.
 ## Process (per item)
 
 1. Latest stable + prerelease: `python3 -m scripts.latest_release '<item-json>'`
-   (run from `${CLAUDE_PLUGIN_ROOT}`).
+   (run from `${CLAUDE_PLUGIN_ROOT}`). **If the result has `"tracked": false`**
+   (a `crates:*` or `ignored` source with no resolvable version feed), skip
+   steps 2–3: emit the row with `latest_stable`, `behind`, and `>1?` all set to
+   the tracked label (`untracked` for `crates:*`, `ignored` for `ignored`), keep
+   the `prerelease` from step 1 (it is `null`), and move on.
 2. Highest existing relnote: `python3 -m scripts.latest_relnote "$DOCS_REPO/<dir>" <file_prefix>`.
 3. Verdict: extract the bare values first — the relnote **version** string from step
    2's object (or `null` if step 2 returned `null`), and the **stable** string and
@@ -35,6 +39,7 @@ the absolute `DOCS_REPO` path.
 ## Output
 
 One row per item: `item | latest_relnote | latest_stable | behind | >1? | prerelease | gap_versions`.
-Flag every item where `more_than_one_behind` is true. Do not include raw JSON.
-If a script prints an error for an item, record it as `ERROR` for that row and
-continue the batch.
+Flag every item where `more_than_one_behind` is true. Untracked/ignored items
+carry their label in place of the numeric columns — never flag them as stale.
+Do not include raw JSON. If a script prints an error for an item, record it as
+`ERROR` for that row and continue the batch.

@@ -1,6 +1,6 @@
 {
   "name": "midnight-relnotes",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Detect stale Midnight release notes and generate on-voice release-note PRs from a midnight-docs checkout. Staleness check, generate, status dashboard, structural validator, prerelease radar, and an automatic draft reviewer.",
   "author": {
     "name": "Aaron Bassett",

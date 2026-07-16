@@ -1,0 +1,92 @@
+{
+  "_comment": "Maps each docs/relnotes/<dir> to its source. Keyed by dir basename. file_prefix defaults to the basename. version_source: 'npm:<pkg>' | 'gh-release' | 'crates:<crate>' (not yet resolvable -> reported untracked) | 'ignored' (deprecated, not tracked). For crates:* the repo/source_path/source_ref are recorded for a future crates resolver.",
+  "midnight-js": {
+    "repo": "midnightntwrk/midnight-js",
+    "version_source": "npm:@midnight-ntwrk/midnight-js",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListMidnightJS.js"
+  },
+  "ledger": {
+    "repo": "midnightntwrk/midnight-ledger",
+    "version_source": "gh-release",
+    "tag_prefix": "ledger-",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListLedger.js"
+  },
+  "midnight-indexer": {
+    "repo": "midnightntwrk/midnight-indexer",
+    "version_source": "gh-release",
+    "tag_prefix": "midnight-indexer-",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListMidnightIndexer.js"
+  },
+  "midnight-wallet-api": {
+    "repo": "midnightntwrk/midnight-wallet",
+    "version_source": "npm:@midnight-ntwrk/wallet-api",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListMidnightWalletAPI.js"
+  },
+  "compact": {
+    "repo": "LFDT-Minokawa/compact",
+    "version_source": "gh-release",
+    "tag_prefix": "compactc-v",
+    "filename_scheme": "dotted",
+    "dynamiclist": "src/components/DynamicListCompact.js",
+    "file_prefix": "toolchain"
+  },
+  "compact-js": {
+    "repo": "midnightntwrk/compact-js",
+    "version_source": "npm:@midnight-ntwrk/compact-js",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListCompactJS.js"
+  },
+  "compact-tools": {
+    "repo": "midnightntwrk/compact",
+    "version_source": "gh-release",
+    "tag_prefix": "compact-v",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListCompactTools.js"
+  },
+  "dapp-connector-api": {
+    "repo": "midnightntwrk/midnight-dapp-connector-api",
+    "version_source": "npm:@midnight-ntwrk/dapp-connector-api",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListDappConnectorAPI.js"
+  },
+  "node": {
+    "repo": "midnightntwrk/midnight-node",
+    "version_source": "gh-release",
+    "tag_prefix": "node-",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListNode.js"
+  },
+  "wallet": {
+    "repo": "midnightntwrk/midnight-wallet",
+    "version_source": "npm:@midnight-ntwrk/wallet-sdk-facade",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListWallet.js"
+  },
+  "onchain-runtime": {
+    "repo": "midnightntwrk/midnight-ledger",
+    "version_source": "crates:midnight-onchain-runtime",
+    "source_path": "onchain-runtime",
+    "source_ref": "ledger-8",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListOnchain.js"
+  },
+  "proof-server": {
+    "repo": "midnightntwrk/midnight-ledger",
+    "version_source": "crates:midnight-proof-server",
+    "source_path": "proof-server",
+    "source_ref": "ledger-8",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListProofServer.js"
+  },
+  "dapp-examples-deprecated": {
+    "repo": "midnight-ntwrk/releases",
+    "version_source": "ignored",
+    "file_prefix": "dapp-examples",
+    "filename_scheme": "dash",
+    "dynamiclist": "src/components/DynamicListExamples.js"
+  }
+}

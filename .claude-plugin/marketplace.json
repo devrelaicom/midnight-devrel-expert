@@ -1,7 +1,7 @@
 {
   "name": "midnight-devrel-expert",
   "metadata": {
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "A marketplace of Claude Code plugins for Midnight developer-relations and ecosystem maintenance. Ships midnight-docs-drift (detects and repairs documentation that has drifted behind the code it describes), midnight-relnotes (release note detection and generation), and gha (full-lifecycle GitHub Actions workflow tooling)."
   },
   "owner": {

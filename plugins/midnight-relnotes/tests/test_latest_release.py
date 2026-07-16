@@ -21,3 +21,32 @@ def test_select_no_stable():
     assert got["stable"] is None
     assert got["all_stable"] == []
     assert got["prerelease"] == "0.33.0-rc.2"
+
+def R(tag, pre=False):
+    return {"tagName": tag, "isPrerelease": pre, "publishedAt": "2026-01-01T00:00:00Z"}
+
+def test_gh_rows_filters_foreign_streams():
+    # midnightntwrk/compact ships two release streams + a dev tag in one repo.
+    rows = [R("compact-v0.5.1"), R("compactc-v0.31.1"), R("compactc-dev-abc"), R("compact-v0.4.0")]
+    got = lrel.gh_rows_to_entries(rows, "compact-v")
+    assert [e["version"] for e in got] == ["0.5.1", "0.4.0"]
+
+def test_gh_rows_empty_prefix_keeps_all():
+    rows = [R("1.0.0"), R("2.0.0", pre=True)]
+    got = lrel.gh_rows_to_entries(rows, "")
+    assert [e["version"] for e in got] == ["1.0.0", "2.0.0"]
+    assert got[1]["prerelease"] is True
+
+def test_is_tracked_source():
+    assert lrel.is_tracked_source("npm:@midnight-ntwrk/midnight-js")
+    assert lrel.is_tracked_source("gh-release")
+    assert not lrel.is_tracked_source("crates:midnight-onchain-runtime")
+    assert not lrel.is_tracked_source("ignored")
+
+def test_resolve_untracked_sources_make_no_calls():
+    # crates:*/ignored must short-circuit before any npm/gh subprocess.
+    for src in ("crates:midnight-onchain-runtime", "ignored", "something-unknown"):
+        got = lrel.resolve({"version_source": src})
+        assert got["tracked"] is False
+        assert got["stable"] is None and got["all_stable"] == []
+        assert got["version_source"] == src

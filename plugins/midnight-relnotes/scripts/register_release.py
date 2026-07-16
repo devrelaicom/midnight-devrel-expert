@@ -3,9 +3,17 @@
 import json, sys
 
 ANCHOR = "const releases = ["
+LATEST = "status: 'LATEST'"
+
+# JS LineTerminators are illegal inside a single-quoted string literal. Escape
+# \n, \r, and U+2028/U+2029 — a CRLF- or U+2028-bearing note would otherwise
+# emit a component that only fails at docs-site build time. Backslash first.
+_LINE_SEP, _PARA_SEP = chr(0x2028), chr(0x2029)
 
 def js_string(s: str) -> str:
-    return "'" + s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n") + "'"
+    return "'" + (s.replace("\\", "\\\\").replace("'", "\\'")
+                   .replace("\n", "\\n").replace("\r", "\\r")
+                   .replace(_LINE_SEP, "\\u2028").replace(_PARA_SEP, "\\u2029")) + "'"
 
 def render_release(rel: dict) -> str:
     lines = ["  {",
@@ -26,14 +34,20 @@ def render_release(rel: dict) -> str:
     return "\n".join(lines)
 
 def register(js_text: str, rel: dict) -> str:
+    if ANCHOR not in js_text:
+        raise ValueError(f"anchor {ANCHOR!r} not found — is this a DynamicList component?")
     idx = js_text.index(ANCHOR) + len(ANCHOR)
-    demoted = js_text[:idx] + "\n" + render_release(rel) + js_text[idx:]
-    # demote the FIRST pre-existing LATEST, which is now the second LATEST in the string
-    first = demoted.index("status: 'LATEST'")
-    second = demoted.find("status: 'LATEST'", first + 1)
+    combined = js_text[:idx] + "\n" + render_release(rel) + js_text[idx:]
+    # Only a new LATEST demotes a prior one. If the note being registered isn't
+    # LATEST (e.g. a backport), leave existing statuses untouched.
+    if rel.get("status") != "LATEST":
+        return combined
+    # combined now has the just-inserted LATEST first; demote the *next* one.
+    first = combined.find(LATEST)
+    second = combined.find(LATEST, first + 1)
     if second == -1:
-        return demoted  # no pre-existing LATEST to demote (first note for this component)
-    return demoted[:second] + "status: 'SUPPORTED'" + demoted[second + len("status: 'LATEST'"):]
+        return combined  # no pre-existing LATEST to demote (first note for this component)
+    return combined[:second] + "status: 'SUPPORTED'" + combined[second + len(LATEST):]
 
 def main(argv=None):
     argv = argv or sys.argv[1:]
