@@ -14,12 +14,11 @@ TECH_RULES = [
     (re.compile(r"midnight node|boot node|full node|rpc node|substrate|polkadot|consensus"), ["midnight-node"]),
 ]
 
-def _url_for(name, known_urls):
-    return known_urls.get(name)
-
 def map_page(items, repo_names, known_urls=None):
-    known_urls = known_urls or {n: f"https://github.com/midnightntwrk/{n}" for n in repo_names}
-    known_urls.setdefault("compact", "https://github.com/LFDT-Minokawa/compact")
+    if known_urls is None:
+        known_urls = {n: f"https://github.com/midnightntwrk/{n}" for n in repo_names}
+    if "compact" in repo_names:
+        known_urls["compact"] = "https://github.com/LFDT-Minokawa/compact"
     linked, inferred = set(), set()
     for x in items:
         if x.startswith("https://github.com/"):

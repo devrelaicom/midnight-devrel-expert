@@ -18,4 +18,4 @@ def test_inferred_from_tech_and_deduped_against_linked():
 
 def test_compact_tech_infers_compact_repo():
     m = bm.map_page(["Compact compiler (compactc)"], NAMES)
-    assert any(u.endswith("/compact") for u in m["inferred"])
+    assert "https://github.com/LFDT-Minokawa/compact" in m["inferred"]
