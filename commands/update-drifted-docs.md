@@ -18,7 +18,7 @@ Resolve eligible files under the scope: `*.mdx`/`*.md`, excluding `_`-prefixed s
 **Stage 1 — Repo list.** Look for `${CLAUDE_PLUGIN_DATA}/<org>/repos.json`. If it exists,
 report its `generated_at` and whether it is within the TTL (14 days). GATE: ask regenerate or
 reuse. On regenerate/absent, run:
-`(cd "${CLAUDE_PLUGIN_ROOT}" && python3 -m scripts.repo_scan --org <org> --since <iso-cutoff> --extra-repo LFDT-Minokawa/compact --out ${CLAUDE_PLUGIN_DATA}/<org>/repos.json)`
+`(cd "${CLAUDE_PLUGIN_ROOT}" && python3 -m scripts.repo_scan --org <org> --since <iso-cutoff> --out ${CLAUDE_PLUGIN_DATA}/<org>/repos.json)`
 
 **Stage 2 — Docs→repo map.** Load `${CLAUDE_PLUGIN_DATA}/<docs-repo>/docs-repo-map.json`.
 Diff its keys against the scoped eligible files. GATE: if new/removed pages → remap all vs

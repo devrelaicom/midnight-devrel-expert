@@ -30,9 +30,11 @@ def build_repo_list(nodes, since_iso, extra):
 GQL = """query($org:String!,$endCursor:String){organization(login:$org){repositories(first:50,after:$endCursor,orderBy:{field:PUSHED_AT,direction:DESC}){pageInfo{hasNextPage endCursor} nodes{name url isArchived isEmpty isPrivate description pushedAt defaultBranchRef{target{... on Commit{committedDate tree{entries{name}}}}}}}}}"""
 
 def _fetch_org(org):
+    # entries[]? guards repos with a null defaultBranchRef (empty/branchless repos exist in
+    # the org) so jq doesn't error "Cannot iterate over null" and abort the whole --paginate run.
     raw = subprocess.run(["gh","api","graphql","--paginate","-f",f"org={org}",
         "-f",f"query={GQL}","--jq",
-        ".data.organization.repositories.nodes[]|{name,url,isArchived,isEmpty,isPrivate,description,pushedAt,lastCommit:.defaultBranchRef.target.committedDate,topLevelEntries:[.defaultBranchRef.target.tree.entries[].name]}"],
+        ".data.organization.repositories.nodes[]|{name,url,isArchived,isEmpty,isPrivate,description,pushedAt,lastCommit:.defaultBranchRef.target.committedDate,topLevelEntries:[.defaultBranchRef.target.tree.entries[]?.name]}"],
         capture_output=True, text=True, check=True).stdout.strip().splitlines()
     return [json.loads(l) for l in raw if l]
 
