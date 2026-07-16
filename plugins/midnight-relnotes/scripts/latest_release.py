@@ -18,7 +18,10 @@ def _npm_entries(pkg):
         capture_output=True, text=True, check=True).stdout or "[]")
     if isinstance(versions, str):
         versions = [versions]
-    return [{"version": v, "prerelease": lib.is_prerelease(v), "published_at": ""} for v in versions]
+    # npm returns versions in ascending publish order; encode that order into
+    # published_at (zero-padded index) so select_versions picks the newest prerelease.
+    return [{"version": v, "prerelease": lib.is_prerelease(v), "published_at": str(i).zfill(9)}
+            for i, v in enumerate(versions)]
 
 def _gh_entries(repo, prefix):
     raw = subprocess.run(["gh", "release", "list", "--repo", repo, "-L", "100",
