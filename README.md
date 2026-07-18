@@ -8,6 +8,7 @@ A marketplace of [Claude Code plugins](https://docs.anthropic.com/en/docs/claude
 |---|---|
 | [`midnight-docs-drift`](./plugins/midnight-docs-drift) | Detects `midnightntwrk/midnight-docs` pages that have drifted behind the repos they document, then drives an interactive extract → classify → severity-rank → verify → fix → PR pipeline over the stale claims (via `/update-drifted-docs`). |
 | [`gha`](./plugins/gha) | Full-lifecycle GitHub Actions tooling: create workflows via a guided brainstorm, lint + security-review them, SHA-pin and maintain actions, run locally, and trigger/monitor runs on GitHub — all from Claude Code. |
+| [`midnight-relnotes`](./plugins/midnight-relnotes) | Finds Midnight release notes that have gone stale — a component's newest published stable version is ahead of its latest note — and drafts the updates in the current voice on a worktree branch, one commit per note (`/midnight-relnotes:check`, `:generate`, `:dashboard`, `:doctor`). Run from inside a `midnight-docs` checkout. |
 | [`midnight-reports`](./plugins/midnight-reports) | Generates self-contained HTML pull-request activity reports for any GitHub repo (`/midnight-reports:pr <repo> [timeframe]`): metrics dashboard, action queue, and narrative commentary, published as an Artifact, with an optional paste-ready Slack summary. |
 | [`midnight-tutorial-checker`](./plugins/midnight-tutorial-checker) | Walks a Midnight tutorial as a configurable reader persona, executes its verifiable steps against the real toolchain, and reports where — and for which kind of reader — the tutorial breaks down (`/midnight-tutorial-checker:check-tutorial <source>`), as an HTML report plus a chat summary. |
 
@@ -29,6 +30,8 @@ Add the marketplace and install a plugin from inside Claude Code:
 /plugin marketplace add devrelaicom/midnight-devrel-expert
 /plugin install midnight-docs-drift@midnight-devrel-expert
 /plugin install gha@midnight-devrel-expert
+/plugin install midnight-relnotes@midnight-devrel-expert
+/plugin install midnight-reports@midnight-devrel-expert
 /plugin install midnight-tutorial-checker@midnight-devrel-expert
 ```
 
