@@ -1,0 +1,19 @@
+{
+  "name": "midnight-tutorial-checker",
+  "version": "0.1.0",
+  "description": "Walk a Midnight Network tutorial as a configurable user persona and report where each kind of user gets stuck.",
+  "author": {
+    "name": "Aaron Bassett",
+    "email": "aaron@devrel-ai.com"
+  },
+  "homepage": "https://github.com/devrelaicom/midnight-devrel-expert",
+  "repository": "https://github.com/devrelaicom/midnight-devrel-expert.git",
+  "license": "MIT",
+  "keywords": [
+    "midnight",
+    "tutorials",
+    "documentation",
+    "developer-experience",
+    "personas"
+  ]
+}

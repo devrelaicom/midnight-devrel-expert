@@ -1,6 +1,9 @@
 # Local research / planning artifacts — never committed
 .research/
 
+# midnight-tutorial-checker generated reports (smoke-test / real-run artifacts)
+tutorial-reports/
+
 # Superpowers SDD scratch (per-run task briefs/reports/diffs) + agent workspaces
 .superpowers/
 .claude/

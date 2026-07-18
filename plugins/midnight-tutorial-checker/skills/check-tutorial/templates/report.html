@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} — Tutorial Check</title>
+<style>
+  :root { --bg:#fff; --fg:#1a1a1a; --muted:#666; --line:#e2e2e2; --card:#f7f7f8;
+          --info:#4a7; --minor:#c93; --major:#e63; --show-stopper:#c33; --none:#bbb; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#16171a; --fg:#e8e8e8; --muted:#9aa; --line:#2c2e33; --card:#1e2024; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:2rem; background:var(--bg); color:var(--fg);
+         font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  h2 { margin-top:0; } .source { color:var(--muted); }
+  .persona-card, .verdict, .timeline, .matrix, .overview { margin:1.5rem 0; }
+  .persona-card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1rem; max-width:520px; }
+  .axis { display:flex; justify-content:space-between; padding:.2rem 0; border-bottom:1px solid var(--line); }
+  .axis-val { font-weight:600; }
+  .counts .count { display:inline-block; margin:.2rem .4rem .2rem 0; padding:.1rem .5rem; border-radius:999px; color:#fff; font-size:.8rem; }
+  .sev-info{background:var(--info)} .sev-minor{background:var(--minor)}
+  .sev-major{background:var(--major)} .sev-show-stopper{background:var(--show-stopper)}
+  table { border-collapse:collapse; width:100%; overflow-x:auto; display:block; }
+  th, td { border:1px solid var(--line); padding:.4rem .6rem; text-align:left; vertical-align:top; }
+  .matrix table { display:table; } .matrix .cell { text-align:center; font-weight:700; color:#fff; }
+  .matrix .sev-none { background:transparent; color:var(--none); }
+  tr.sev-show-stopper td:nth-child(5){ font-weight:700; color:var(--show-stopper); }
+</style>
+</head>
+<body>
+<header><p class="source">Generated {{GENERATED_AT}}</p></header>
+{{BODY}}
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "tutorial": { "title": "Midnight Counter Tutorial", "source": "https://example.test/counter", "fetchedAt": "2026-07-06T11:59:00Z" },
+  "generatedAt": "2026-07-06T12:00:00Z",
+  "mode": "single",
+  "steps": [
+    { "index": 1, "title": "Install the toolchain", "summary": "Install Compact CLI and Node." },
+    { "index": 2, "title": "Write the contract", "summary": "Add a witness and a circuit." },
+    { "index": 3, "title": "Compile", "summary": "Run compact compile." }
+  ],
+  "personas": [
+    {
+      "name": "student",
+      "axes": { "experience": "beginner", "patience": "medium", "domain-knowledge": "none", "tooling": "some", "comprehension": "fluent" },
+      "verdict": { "completed": false, "fellOffAtStep": 2, "summary": "Blocked at step 2 by an undefined 'witness' concept." },
+      "severityCounts": { "info": 1, "minor": 1, "major": 0, "show-stopper": 1 },
+      "findings": [
+        { "step": 1, "title": "Install the toolchain", "type": "smooth", "axis": "none", "severity": "info", "knowledgeNeeded": "", "groundTruthResult": "pass", "suggestedFix": "", "detail": "Install commands ran cleanly." },
+        { "step": 2, "title": "Write the contract", "type": "blocker", "axis": "domain-knowledge", "severity": "show-stopper", "knowledgeNeeded": "what a witness is and why it is private", "groundTruthResult": "n/a", "suggestedFix": "Define 'witness' on first use and link to the privacy concept page.", "detail": "The term 'witness' appears with no definition; a beginner with no blockchain background cannot proceed." },
+        { "step": 3, "title": "Compile", "type": "assumed-knowledge", "axis": "none", "severity": "minor", "knowledgeNeeded": "", "groundTruthResult": "pass", "suggestedFix": "Show the expected output directory.", "detail": "Compiles, but the tutorial does not say where output lands." }
+      ]
+    }
+  ]
+}
