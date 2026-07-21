@@ -40,13 +40,39 @@ def test_gh_rows_empty_prefix_keeps_all():
 def test_is_tracked_source():
     assert lrel.is_tracked_source("npm:@midnight-ntwrk/midnight-js")
     assert lrel.is_tracked_source("gh-release")
-    assert not lrel.is_tracked_source("crates:midnight-onchain-runtime")
+    assert lrel.is_tracked_source("crates:midnight-onchain-runtime")  # now resolved
     assert not lrel.is_tracked_source("ignored")
 
 def test_resolve_untracked_sources_make_no_calls():
-    # crates:*/ignored must short-circuit before any npm/gh subprocess.
-    for src in ("crates:midnight-onchain-runtime", "ignored", "something-unknown"):
+    # ignored / unknown short-circuit before any npm/gh/cargo subprocess.
+    for src in ("ignored", "something-unknown"):
         got = lrel.resolve({"version_source": src})
         assert got["tracked"] is False
         assert got["stable"] is None and got["all_stable"] == []
         assert got["version_source"] == src
+
+def test_resolve_crate_stable(monkeypatch):
+    # A crate that resolves to a stable version behaves like any tracked source.
+    monkeypatch.setattr(lrel, "_crate_version", lambda cfg, crate: "3.1.0")
+    got = lrel.resolve({"version_source": "crates:midnight-onchain-runtime"})
+    assert got["tracked"] is True
+    assert got["stable"] == "3.1.0" and got["all_stable"] == ["3.1.0"]
+    assert got["prerelease"] is None
+
+def test_resolve_crate_prerelease_only(monkeypatch):
+    # A crate whose only version is a prerelease (e.g. workspace 8.2.0-rc.1):
+    # surfaced as prerelease, with no stable and nothing to be "behind".
+    monkeypatch.setattr(lrel, "_crate_version", lambda cfg, crate: "8.2.0-rc.1")
+    got = lrel.resolve({"version_source": "crates:midnight-proof-server"})
+    assert got["tracked"] is True
+    assert got["stable"] is None and got["all_stable"] == []
+    assert got["prerelease"] == "8.2.0-rc.1"
+
+def test_resolve_crate_unresolvable_untracked(monkeypatch):
+    # Neither cargo nor Cargo.toml yields a version → degrade to untracked,
+    # never error, never fabricate.
+    monkeypatch.setattr(lrel, "_crate_version", lambda cfg, crate: None)
+    got = lrel.resolve({"version_source": "crates:whatever"})
+    assert got["tracked"] is False
+    assert got["stable"] is None and got["all_stable"] == []
+    assert got["version_source"] == "crates:whatever"

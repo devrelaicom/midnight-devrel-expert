@@ -17,11 +17,11 @@ One entry per relnotes directory:
 | `dir` | e.g. `docs/relnotes/midnight-js` |
 | `file_prefix` | filename stem, defaults to the dir basename (e.g. `toolchain` in the `compact` dir) |
 | `repo` | source repo, `owner/name` |
-| `version_source` | `npm:<pkg>` \| `gh-release` \| `crates:<crate>` (recorded for a future crates resolver — reported **untracked** today) \| `ignored` (deprecated, not tracked). Unrecognised values are treated as untracked, never silently resolved as GitHub releases. |
-| `tag_prefix` | stripped from GitHub tags (`v`, `ledger-`, `compactc-v`, `compact-v`, `node-`); also filters a monorepo's tags to this stream |
+| `version_source` | `npm:<pkg>` \| `gh-release` \| `crates:<crate>` (resolved via cargo/crates.io, else the crate's `Cargo.toml` — **untracked only if neither resolves**) \| `ignored` (deprecated, not tracked). Unrecognised values are treated as untracked, never silently resolved as GitHub releases. |
+| `tag_prefix` | stripped from GitHub tags (indexer `v`, `ledger-`, `compactc-v`, `compact-v`, `node-`); also filters a monorepo's tags to this stream |
 | `filename_scheme` | `dash` (`midnight-js-4-1-1`) \| `dotted` (`toolchain-0.31.0`) |
 | `dynamiclist` | `src/components/DynamicList<Item>.js` |
-| `source_path` / `source_ref` | for `crates:*` only: the crate's path + branch in `repo` (e.g. `onchain-runtime` @ `ledger-8`) |
+| `source_path` / `source_ref` | for `crates:*` only: the crate's path + branch in `repo` (e.g. `proof-server` @ `ledger-8`) — used by the Cargo.toml fallback, which also follows `version.workspace = true` into the workspace root |
 | `status_vocab` | `["LATEST","SUPPORTED","DEPRECATED"]` |
 
 The seed that maps dirs → sources lives in **`scripts/seed.json`** (data, not code),
@@ -30,10 +30,16 @@ manifest with `python3 -m scripts.manifest refresh --docs-repo "$DOCS_REPO" --ou
 Any dir printed as `UNMAPPED` must be added to `scripts/seed.json`
 before it can be checked or generated — surface these to the user; never skip them silently.
 
-**Untracked/ignored items** (`crates:*`, `ignored`) appear in the manifest and
-dashboard but have no meaningful `behind` — they are labelled `untracked` /
-`ignored`, never flagged stale. Give an item a real `npm:`/`gh-release` source
-before trusting its staleness.
+**Crates (`crates:<crate>`)** are resolved like any tracked source: cargo /
+crates.io first, then the crate's `Cargo.toml` at `source_path`@`source_ref`
+(following `version.workspace = true` into the workspace root). A crate whose only
+resolvable version is a prerelease shows no stable and nothing to be "behind" —
+truthful, not stale. A crate becomes **untracked** only when neither cargo nor the
+Cargo.toml yields a version (the resolver never errors and never fabricates one).
+
+**Untracked/ignored items** appear in the manifest and dashboard but have no
+meaningful `behind` — they are labelled `untracked` / `ignored` and never flagged
+stale.
 
 ## Staleness
 

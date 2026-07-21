@@ -13,10 +13,22 @@ check() { # check <bin> <version-args...>
   fi
 }
 
+check_optional() { # check_optional <bin> <note> <version-args...>
+  local name="$1" note="$2"; shift 2
+  if command -v "$name" >/dev/null 2>&1; then
+    echo "OK      $name ($("$name" "$@" 2>&1 | head -1))"
+  else
+    echo "OPT     $name absent — $note"  # optional: does not fail the run
+  fi
+}
+
 check git --version
 check jq --version
 check python3 --version
 check npm --version
+# Optional: cargo resolves crates:* items via crates.io; the Cargo.toml fallback
+# (gh api) covers those items when cargo is absent, so this never fails the run.
+check_optional cargo "crates:* still resolve via the Cargo.toml fallback" --version
 if command -v node >/dev/null 2>&1; then
   ver="$(node --version | tr -d 'v')"; major="${ver%%.*}"
   if [ "$major" -ge 22 ]; then echo "OK      node ($ver)"; else echo "MISSING node>=22 (found $ver)"; status=1; fi

@@ -25,6 +25,7 @@ not install anything, and do not offer to.
 | `jq` | JSON parsing in the shells |
 | `python3` | The deterministic cores |
 | `npm` | npm dist-tag/version lookups |
+| `cargo` (optional) | crates.io lookups for `crates:*` items; absence is fine — the Cargo.toml fallback covers it, so this never fails the run |
 | docs-checkout | Commands must run from inside a `midnight-docs` clone |
 
 ## Scope

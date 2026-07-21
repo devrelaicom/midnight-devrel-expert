@@ -33,3 +33,42 @@ def test_filename_to_version():
     assert lib.filename_to_version("midnight-js-4-1-1.mdx", "midnight-js") == "4.1.1"
     assert lib.filename_to_version("toolchain-0.31.0.mdx", "toolchain") == "0.31.0"
     assert lib.filename_to_version("ledger-8-1-0.mdx", "midnight-js") is None
+
+def test_stamp_utc_is_filesystem_safe():
+    s = lib.stamp_utc()
+    import re
+    assert re.fullmatch(r"\d{8}-\d{6}", s)  # YYYYMMDD-HHMMSS, no ':' or spaces
+
+# ---- Cargo.toml version extraction (shapes taken from the real crates) ----
+# onchain-runtime/Cargo.toml: a literal version.
+ONCHAIN_TOML = '[package]\nname = "midnight-onchain-runtime"\nversion = "3.1.0"\n\n[features]\n'
+# proof-server/Cargo.toml: inherits from the workspace.
+PROOF_TOML = '[package]\nname = "midnight-proof-server"\nversion.workspace = true\n\n[dependencies]\n'
+# midnight-ledger workspace root: dotted `[workspace] package.version` form.
+WS_ROOT_TOML = '[workspace]\nresolver = "2"\npackage.version = "8.2.0-rc.1"\n\n[workspace.dependencies]\n'
+WS_ROOT_SECTION_TOML = '[workspace.package]\nversion = "8.2.0-rc.1"\nedition = "2021"\n'
+
+def test_package_version_literal():
+    assert lib.package_version(ONCHAIN_TOML) == "3.1.0"
+
+def test_package_version_workspace_inherited():
+    assert lib.package_version(PROOF_TOML) == lib.WORKSPACE_INHERITED
+
+def test_package_version_inline_workspace_table():
+    assert lib.package_version('[package]\nversion = { workspace = true }\n') == lib.WORKSPACE_INHERITED
+
+def test_workspace_package_version_both_forms():
+    assert lib.workspace_package_version(WS_ROOT_TOML) == "8.2.0-rc.1"        # dotted
+    assert lib.workspace_package_version(WS_ROOT_SECTION_TOML) == "8.2.0-rc.1"  # sectioned
+
+def test_crate_version_literal_needs_no_workspace():
+    assert lib.crate_version(ONCHAIN_TOML) == "3.1.0"
+
+def test_crate_version_follows_workspace_inheritance():
+    assert lib.crate_version(PROOF_TOML, WS_ROOT_TOML) == "8.2.0-rc.1"
+
+def test_crate_version_unresolvable_without_workspace():
+    # Inherited version but no workspace toml supplied → cannot resolve.
+    assert lib.crate_version(PROOF_TOML) is None
+    # No version at all → None.
+    assert lib.crate_version('[package]\nname = "x"\n') is None
