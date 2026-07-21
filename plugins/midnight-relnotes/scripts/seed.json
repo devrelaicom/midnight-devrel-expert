@@ -1,5 +1,5 @@
 {
-  "_comment": "Maps each docs/relnotes/<dir> to its source. Keyed by dir basename. file_prefix defaults to the basename. version_source: 'npm:<pkg>' | 'gh-release' | 'crates:<crate>' (not yet resolvable -> reported untracked) | 'ignored' (deprecated, not tracked). For crates:* the repo/source_path/source_ref are recorded for a future crates resolver.",
+  "_comment": "Maps each docs/relnotes/<dir> to its source. Keyed by dir basename. file_prefix defaults to the basename. version_source: 'npm:<pkg>' | 'gh-release' | 'crates:<crate>' (resolved via cargo/crates.io, else the crate's Cargo.toml at source_path@source_ref; untracked only if neither resolves) | 'ignored' (deprecated, not tracked). For crates:* the repo/source_path/source_ref locate the crate for the Cargo.toml fallback (handles version.workspace = true).",
   "midnight-js": {
     "repo": "midnightntwrk/midnight-js",
     "version_source": "npm:@midnight-ntwrk/midnight-js",
@@ -16,7 +16,7 @@
   "midnight-indexer": {
     "repo": "midnightntwrk/midnight-indexer",
     "version_source": "gh-release",
-    "tag_prefix": "midnight-indexer-",
+    "tag_prefix": "v",
     "filename_scheme": "dash",
     "dynamiclist": "src/components/DynamicListMidnightIndexer.js"
   },
@@ -67,10 +67,9 @@
     "dynamiclist": "src/components/DynamicListWallet.js"
   },
   "onchain-runtime": {
+    "_note": "Deprecated: since Ledger 7.0.0 onchain-runtime ships as part of the ledger release and is no longer noted on its own. Not tracked.",
     "repo": "midnightntwrk/midnight-ledger",
-    "version_source": "crates:midnight-onchain-runtime",
-    "source_path": "onchain-runtime",
-    "source_ref": "ledger-8",
+    "version_source": "ignored",
     "filename_scheme": "dash",
     "dynamiclist": "src/components/DynamicListOnchain.js"
   },
